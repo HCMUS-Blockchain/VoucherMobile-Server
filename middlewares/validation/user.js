@@ -20,3 +20,8 @@ exports.userValidationResult = (req, res, next) => {
     }
     next();
 }
+
+exports.validateUserSignIn = [
+    check('email').trim().isEmail().withMessage('Must be a valid email address'),
+    check('password').trim().not().isEmpty().withMessage('Password is required')
+]

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -10,6 +11,23 @@ const userSchema = new mongoose.Schema({
     },
     avatar: Buffer
 });
+userSchema.pre('save', async function (next) {
+    const user = this;
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 8);
+    }
+    next();
+});
+
+userSchema.methods.comparePassword = async function (password) {
+    if(!password) throw new Error('Password is required');
+    try{
+        return await bcrypt.compare(password, this.password);
+    }catch (e) {
+        console.log(e);
+        return false;
+    }
+}
 
 userSchema.statics.inThisEmailInUse= async function (email) {
     if(!email) throw new Error('Email is required');
