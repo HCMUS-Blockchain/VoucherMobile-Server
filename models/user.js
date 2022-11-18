@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    avatar: Buffer
+    avatar: Buffer,
+    tokens: [{ type: Object }],
 });
 userSchema.pre('save', async function (next) {
     const user = this;

@@ -8,7 +8,7 @@ router.post('/create',validateUserSignUp,userValidationResult, createUser);
 //signin
 router.post('/signin',validateUserSignIn,userValidationResult, userSignIn);
 //signout
-router.post('/sign-out', isAuth, signOut);
+router.get('/signout', isAuth, signOut);
 router.post('/create-post',isAuth,(req, res) => {
     //create our post
     res.send('Welcome you are in secret route')
