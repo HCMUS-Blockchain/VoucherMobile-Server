@@ -51,3 +51,27 @@ exports.signOut = async (req, res) => {
         res.json({success: true, message: 'Sign out successfully!'});
     }
 };
+const cloudinary = require("../utils/imageUpload");
+exports.uploadAvatar = async (req, res) => {
+    const {_id} = req.user;
+    if (!_id) return res.status(400).send({'error': 'User not found'});
+    try {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'VoucherHub',
+            public_id: `${_id}_profile`,
+            width: 500,
+            height: 500,
+            crop: "fill"
+        })
+        console.log(result);
+        await User.findByIdAndUpdate(_id, {avatar: result.secure_url});
+        res
+            .status(201)
+            .json({success: true, message: 'Your profile has updated!'});
+    } catch (e) {
+        res
+            .status(500)
+            .json({success: false, message: 'server error, try after some time'});
+        console.log('Error while uploading profile image', error.message);
+    }
+}
