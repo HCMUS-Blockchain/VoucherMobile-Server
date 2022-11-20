@@ -1,0 +1,40 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "D:\\React native\\blockchain-app\\VoucherHub\\VoucherMobile-Server\\contracts\\RandomNumber.sol": {
+      "lastModificationDate": 1668915199302,
+      "contentHash": "4bb166663a1fd0baa84423ef2ec8b8c9",
+      "sourceName": "contracts/RandomNumber.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "RandomNumber"
+      ]
+    }
+  }
+}
