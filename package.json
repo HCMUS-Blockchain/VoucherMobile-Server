@@ -2,10 +2,12 @@
   "name": "voucherhubserver",
   "version": "0.0.0",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.32.0",
     "cookie-parser": "~1.4.4",
@@ -13,6 +15,7 @@
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "express-validator": "^6.14.2",
+    "hardhat": "^2.12.2",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.2",
