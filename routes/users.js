@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const {createUser, userSignIn, signOut, uploadAvatar} = require('../controllers/user');
 const {validateUserSignUp, userValidationResult, validateUserSignIn} = require('../middlewares/validation/user');
 const {isAuth} = require("../middlewares/auth");

@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar: String,
     tokens: [{ type: Object }],
+    vouchers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Voucher' }],
 });
 userSchema.pre('save', async function (next) {
     const user = this;
@@ -43,6 +44,5 @@ userSchema.statics.inThisEmailInUse= async function (email) {
         console.log(e);
         return false;
     }
-
 }
 module.exports = mongoose.model('User', userSchema);
