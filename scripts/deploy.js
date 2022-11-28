@@ -7,7 +7,7 @@ async function main() {
   console.log("Account balance: ", (await deployer.getBalance()).toString());
 
   const Contract = await ethers.getContractFactory("RandomNumber");
-  const contract = await Contract.deploy("1234");
+  const contract = await Contract.deploy("1234", "NgocLe", "1.0.0");
 
   console.log("Token address", contract.address);
 }
