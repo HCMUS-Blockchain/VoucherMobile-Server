@@ -10,7 +10,7 @@ exports.signMessage = (verifyingContract, message, privateKey) => {
         { name: "chainId", type: "uint256" },
         { name: "verifyingContract", type: "address" },
       ],
-      Number: [{ name: "aNumber", type: "uint256" }],
+      Number: [{ name: "aString", type: "string" }],
     },
     primaryType: "Number",
     domain: {

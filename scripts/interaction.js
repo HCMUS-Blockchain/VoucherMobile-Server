@@ -1,6 +1,8 @@
 require("dotenv").config({ path: __dirname + "/../.env" });
 const Web3 = require("web3");
 const { getAmountToken } = require("./getData");
+const { signMessage } = require("./signMessage");
+
 const randomNumberAbi = [
   {
     inputs: [
@@ -12,46 +14,35 @@ const randomNumberAbi = [
     type: "constructor",
   },
   {
-    anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "addr", type: "address" },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "number",
-        type: "uint256",
-      },
-    ],
-    name: "GetRandomNumber",
-    type: "event",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "_tokenFromUniswap", type: "uint256" },
+      { internalType: "string", name: "_tokenFromUniswap", type: "string" },
       { internalType: "uint256", name: "_from", type: "uint256" },
       { internalType: "uint256", name: "_to", type: "uint256" },
       { internalType: "bytes", name: "_signature", type: "bytes" },
     ],
     name: "_getRandomNumberInRange",
-    outputs: [],
-    stateMutability: "nonpayable",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
     type: "function",
   },
 ];
 
-const randomNumberAddress = "0x19594C37FD57086F8c8223eb3aCCEdf7b3b55bEd";
+const randomNumberAddress = "0x518CcA4f6EC66215dDe2fF1C1661841F9481AE8A";
 myPrivateKey = process.env.PRIVATE_KEY;
+
 async function calTotalToken() {
   const result1 = await getAmountToken(process.env.ADDRESS_POOL_1);
   const result2 = await getAmountToken(process.env.ADDRESS_POOL_2);
-  const result3 = await getAmountToken(process.env.ADDRESS_POOL_2);
-  return (
-    parseFloat(result1[0]) +
-    parseFloat(result1[1]) +
-    parseFloat(result2[0]) +
-    parseFloat(result2[1]) +
-    parseFloat(result3[0]) +
-    parseFloat(result3[1])
+  const result3 = await getAmountToken(process.env.ADDRESS_POOL_3);
+  return String(
+    parseInt(
+      parseFloat(result1[0]) +
+        parseFloat(result1[1]) +
+        parseFloat(result2[0]) +
+        parseFloat(result2[1]) +
+        parseFloat(result3[0]) +
+        parseFloat(result3[1])
+    )
   );
 }
 
@@ -65,22 +56,26 @@ async function interaction() {
   );
 
   await web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
+  const totalToken = await calTotalToken();
+  const signature = signMessage(
+    randomNumberAddress,
+    {
+      aString: totalToken,
+    },
+    myPrivateKey
+  );
 
   rs = await randomNumberContract.methods
-    ._getRandomNumberInRange(
-      1234,
-      1,
-      1000,
-      "0x942780270ec1d474699ee4e6c2ad9a405e3e5dcce75da7567f2241c5556bd4bd6199cf4ad989cc2049ecde05c3a02f0e5d876d26c28641dab9019000c3ac592a1b"
-    )
-    .send({
+    ._getRandomNumberInRange(totalToken, 1, 10000000000, signature)
+    .call({
       from: "0xa30DE202EB5D5e706E05e3F10134F96BB42Abfe2",
-      gas: 3000000,
     });
-  console.log(rs);
+
+  return rs;
+  // .send({
+  //   gas: 3000000,
+  // });
+  // console.log(rs);
 }
 
-interaction();
-// calTotalToken().then((result) => {
-//   console.log(result);
-// });
+module.exports.interaction = interaction;
