@@ -31,7 +31,7 @@ contract RandomNumber is EIP712{
         return signer;
   }
 
-    function _getRandomNumberInRange(uint _tokenFromUniswap, uint _from, uint _to, bytes memory _signature) external  {
+    function _getRandomNumberInRange(uint _tokenFromUniswap, uint _from, uint _to, bytes memory _signature) public  {
         require(_to > _from, "Range is not valid");
         require(validateAmountFunction(_tokenFromUniswap, _signature) == msg.sender, "Not invalid");
         ++randNonce;
