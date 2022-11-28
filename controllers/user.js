@@ -11,6 +11,7 @@ exports.createUser = async (req, res) => {
 exports.userSignIn = async (req, res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email});
+    console.log("user", user);
     if (!user) return res.status(400).send({'error': 'User not found'});
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) return res.status(400).send({'error': 'Password is incorrect'});
@@ -63,15 +64,19 @@ exports.uploadAvatar = async (req, res) => {
             height: 500,
             crop: "fill"
         })
-        console.log(result);
-        await User.findByIdAndUpdate(_id, {avatar: result.secure_url});
+        const updateUser = await User.findByIdAndUpdate(_id, {avatar: result.secure_url});
+        const user = {
+            _id: updateUser._id,
+            fullName: updateUser.fullName,
+            email: updateUser.email,
+            avatar: result.secure_url};
         res
             .status(201)
-            .json({success: true, message: 'Your profile has updated!'});
+            .json({success: true, message: 'Your profile has updated!', user});
     } catch (e) {
         res
             .status(500)
             .json({success: false, message: 'server error, try after some time'});
-        console.log('Error while uploading profile image', error.message);
+        console.log('Error while uploading profile image', e.message);
     }
 }
