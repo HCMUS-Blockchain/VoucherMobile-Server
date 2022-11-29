@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const voucherSchema = new mongoose.Schema({
     code: {
         type: String,
-        required: true,
     },
     image: {
         type: String,
@@ -31,6 +30,17 @@ const voucherSchema = new mongoose.Schema({
     },
     usedAt: {
         type: Date,
+    },
+    campaign: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Campaign',
+        required: true,
+    },
+    timeGet: {
+        type:Date
+    },
+    game: {
+        type:String
     }
 });
 
