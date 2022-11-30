@@ -23,8 +23,10 @@ exports.addVoucher = async (req, res) => {
 
 exports.getAllVouchersById = async (req, res) => {
     try {
-        const {userId} = req.query;
-        const vouchers = await User.findById(userId).populate('vouchers');
+        const userId = req.user._id
+        const user = await User.findById(userId).populate('vouchers');
+        const vouchers = user.vouchers;
+        res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
     }catch (e) {
         res.status(400).send({success: false, message: e.message});
     }
@@ -97,6 +99,7 @@ const setVoucherInformation = async (voucherId,game,timeGet) => {
         throw new Error(e.message);
     }
 }
+
 const getCampaignInThisCampaignAndDiscount = async (campaignId,discount) => {
     try {
         return await Voucher.find({campaign: campaignId, discount, available: true});
