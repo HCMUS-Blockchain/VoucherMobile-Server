@@ -41,6 +41,11 @@ const voucherSchema = new mongoose.Schema({
     },
     game: {
         type:String
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
     }
 });
 
