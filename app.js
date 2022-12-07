@@ -13,6 +13,7 @@ const randomRouter = require('./routes/random');
 const compaignRouter = require('./routes/campaign');
 const gameRouter = require('./routes/game');
 const categoryRouter = require('./routes/category');
+const counterpartRouter = require('./routes/counterpart');
 const app = express();
 
 
@@ -34,6 +35,7 @@ app.use('/random',randomRouter);
 app.use('/campaign',compaignRouter)
 app.use('/game',gameRouter)
 app.use('/category',categoryRouter)
+app.use('/counterpart',counterpartRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
