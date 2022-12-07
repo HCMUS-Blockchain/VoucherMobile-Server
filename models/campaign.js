@@ -10,5 +10,8 @@ const campaignSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    shop:{
+        type: String,
+    }
 })
 module.exports = mongoose.model('Campaign', campaignSchema);

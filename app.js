@@ -11,6 +11,8 @@ const usersRouter = require('./routes/users');
 const vouchersRouter = require('./routes/vouchers');
 const randomRouter = require('./routes/random');
 const compaignRouter = require('./routes/campaign');
+const gameRouter = require('./routes/game');
+const categoryRouter = require('./routes/category');
 const app = express();
 
 
@@ -30,6 +32,8 @@ app.use('/users', usersRouter);
 app.use('/vouchers', vouchersRouter);
 app.use('/random',randomRouter);
 app.use('/campaign',compaignRouter)
+app.use('/game',gameRouter)
+app.use('/category',categoryRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
