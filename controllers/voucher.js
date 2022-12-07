@@ -61,6 +61,23 @@ exports.getAllVouchersAndCategory = async (req, res) => {
     }
 }
 
+exports.searchVouchersByDescriptionAndShop = async (req, res) => {
+    try {
+        const {keyword} = req.body;
+        if (keyword === '') {
+            const vouchers = await Voucher.find();
+            res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
+        }
+        const vouchersFind = await Voucher.find().populate('campaign');
+        const vouchers = vouchersFind.filter(voucher => {
+            return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.shop.toLowerCase().includes(keyword.toLowerCase());
+        })
+        res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
+    } catch (e) {
+        res.status(400).send({success: false, message: e.message});
+    }
+}
+
 exports.playGame = async (req, res) => {
     try {
         const {userId, points, gameType, campaignId} = req.body;

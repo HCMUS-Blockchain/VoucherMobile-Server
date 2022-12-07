@@ -12,6 +12,9 @@ const campaignSchema = new mongoose.Schema({
     },
     shop:{
         type: String,
+    },
+    counterpart: {
+        type: mongoose.Schema.Types.ObjectId,
     }
 })
 module.exports = mongoose.model('Campaign', campaignSchema);
