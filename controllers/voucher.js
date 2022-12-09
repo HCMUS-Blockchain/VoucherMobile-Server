@@ -70,8 +70,7 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
         if (keyword === '') {
             const vouchers = await Voucher.find();
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
-        }
-        else{
+        } else {
             const vouchersFind = await Voucher.find().populate('campaign');
             console.log(vouchersFind)
             const vouchers = vouchersFind.filter(voucher => {
@@ -87,10 +86,9 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
 exports.playGame = async (req, res) => {
     try {
         const {userId, points, gameType, campaignId} = req.body;
-        const game = await Game.findOne({gameType})
-        let {pointRs,discountRs} = findPointAndDiscount(points, game)
+        const game = await Game.findOne({name: gameType})
+        let {pointRs, discountRs} = findPointAndDiscount(points, game)
         const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
-        console.log(countVoucher)
         if (countVoucher.length > 0) {
             const voucher_ = countVoucher[0];
             await setVoucherInformation(voucher_._id, gameType, new Date());

@@ -84,3 +84,5 @@ F
 scripts/interaction.js,a\8\a813ec896e6805a7e2503d291b0cf2c7b5ba7ac5
 G
 controllers/category.js,0\3\03eb56641a6a39e75cf211d758c06cdf354f95e5
+>
+models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
