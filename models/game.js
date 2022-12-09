@@ -9,7 +9,10 @@ const gameSchema = new mongoose.Schema({
     }, data: {
         type: Object,
     }, pointAverage: {
-        type: Number,
+        type:[{
+            point:Number,
+            discount:Number
+        }]
     }
 })
 module.exports = mongoose.model('Game', gameSchema);

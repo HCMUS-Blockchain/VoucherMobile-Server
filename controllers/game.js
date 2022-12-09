@@ -19,3 +19,31 @@ exports.getDataQuizGame = async (req, res) => {
         res.status(400).send({success: false, message: e.message});
     }
 }
+
+exports.getGameInfor = async (req, res) => {
+    try{
+        const name = req.body.name
+        const game = await Game.findOne({name})
+        res.status(200).send({success: true, message: 'Get data quiz game successfully', game});
+    }catch (e) {
+        res.status(400).send({success: false, message: e.message});
+    }
+}
+
+exports.findPointAndDiscount= (point,game) => {
+    let pointRs=0, discountRs=0
+    for (let i = 0; i < game.pointAverage.length; i++) {
+        if (point < game.pointAverage[i].point) {
+            if (i-1 >= 0) {
+                pointRs = game.pointAverage[i-1].point
+                discountRs = game.pointAverage[i-1].discount
+            }
+            else {
+                pointRs = game.pointAverage[i].point
+                discountRs = 0
+            }
+            break
+        }
+    }
+    return {pointRs, discountRs}
+}
