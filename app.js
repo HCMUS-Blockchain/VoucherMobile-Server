@@ -1,15 +1,20 @@
-var createError = require('http-errors');
-var express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 require('dotenv').config();
 require('./models/db');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const vouchersRouter = require('./routes/vouchers');
+const randomRouter = require('./routes/random');
+const compaignRouter = require('./routes/campaign');
+const gameRouter = require('./routes/game');
+const categoryRouter = require('./routes/category');
+const counterpartRouter = require('./routes/counterpart');
+const app = express();
 
 
 
@@ -25,6 +30,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/vouchers', vouchersRouter);
+app.use('/random',randomRouter);
+app.use('/campaign',compaignRouter)
+app.use('/game',gameRouter)
+app.use('/category',categoryRouter)
+app.use('/counterpart',counterpartRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
