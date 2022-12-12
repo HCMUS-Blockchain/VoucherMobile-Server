@@ -1,7 +1,7 @@
 // const { signMessage } = require("./signMessage");
 // function test() {
 //   const x = signMessage(
-//     "0x2945666a5c6f6957ff9664bbc994f22c5ddcba84",
+//     "0x476A2741Bf8a4dD75A3B0c533aC4e330B5f4d78f",
 //     {
 //       aString: "362168437253",
 //     },
@@ -13,9 +13,16 @@
 
 // test();
 
-const { interaction } = require("./interaction");
+const {
+  getRandomNumberBaseOnUniswap,
+  callRandomGenerationFunction,
+  getRandomNumberBaseOnChainlink,
+  checkRandomNumber,
+} = require("./getRandomNumber");
 
-interaction().then((x) => {
+checkRandomNumber(
+  "82431910698876956302611493940736480431674041676827966765601913670330132702096"
+).then((x) => {
   console.log(x);
 });
 // const ethers = require("ethers");
