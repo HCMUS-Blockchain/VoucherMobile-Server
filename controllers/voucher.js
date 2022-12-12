@@ -1,6 +1,6 @@
 const Voucher = require('../models/voucher');
 const User = require('../models/user');
-const {interaction} = require("../scripts/interaction");
+const {getRandomNumberBaseOnUniswap} = require("../scripts/getRandomNumber");
 const Category = require('../models/category');
 const Game = require("../models/game");
 const {findPointAndDiscount} = require("./game");
@@ -39,12 +39,18 @@ exports.getAllVouchersByCategoryName = async (req, res) => {
     try {
         const userId = req.user._id
         const category = req.body.category;
-        const user = await User.findById(userId).populate('vouchers');
+        const user = await User.findById(userId).populate('vouchers')
         if (category === 'All') {
             const vouchers = user.vouchers;
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
-            const vouchers = user.vouchers.filter(voucher => voucher.campaign.category === category);
+            const vouchers = []
+            for (let i = 0; i < user.vouchers.length; i++) {
+                const categoryFinding = await Category.findById(user.vouchers[i].category);
+                if (categoryFinding.name === category) {
+                    vouchers.push(user.vouchers[i])
+                }
+            }
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         }
     } catch (e) {
@@ -97,7 +103,7 @@ exports.playGame = async (req, res) => {
                 new: true,
                 useFindAndModify: false
             });
-            interaction().then(async (x) => {
+            getRandomNumberBaseOnUniswap().then(async (x) => {
                 console.log(x);
                 const voucher = await Voucher.findByIdAndUpdate(voucher_._id, {code: x}, {
                     new: true,

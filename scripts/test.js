@@ -20,9 +20,7 @@ const {
   checkRandomNumber,
 } = require("./getRandomNumber");
 
-checkRandomNumber(
-  "82431910698876956302611493940736480431674041676827966765601913670330132702096"
-).then((x) => {
+checkRandomNumber("99468614129617611825081452270824631542651134421330368561506280480646086446617").then((x) => {
   console.log(x);
 });
 // const ethers = require("ethers");
