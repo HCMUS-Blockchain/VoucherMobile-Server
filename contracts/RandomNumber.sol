@@ -3,27 +3,45 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract RandomNumber is EIP712{
+contract RandomNumber is EIP712, VRFConsumerBaseV2, ConfirmedOwner{
+    struct RequestStatus {
+        bool fulfilled; 
+        bool exists; 
+        uint256[] randomWords;
+    }
+    mapping(uint256 => RequestStatus)
+        public s_requests; 
+    VRFCoordinatorV2Interface COORDINATOR;
+
+    uint64 s_subscriptionId;
+
+    uint256[] public requestIds;
+    uint256 public lastRequestId;
+    bytes32 keyHash =
+        0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15;
+    uint32 callbackGasLimit = 100000;
+    uint16 requestConfirmations = 3;
+    uint32 numWords = 1;
     string private seed;
-    uint256 private randNonce;
 
-    event GetRandomNumber(address indexed addr, uint256 number);
-
-    modifier notContract() {
-        require(msg.sender.code.length == 0, "Contract not allowed");
-        _;
-    }
-
-    constructor(string memory _seed, string memory _name, string memory _version) EIP712(_name, _version) {
+    constructor(string memory _seed, string memory _name, string memory _version, uint64 subscriptionId) EIP712(_name, _version)  VRFConsumerBaseV2(0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D)
+        ConfirmedOwner(msg.sender){
         seed = _seed;
+        COORDINATOR = VRFCoordinatorV2Interface(
+            0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D
+        );
+        s_subscriptionId = subscriptionId;
     }
 
 
-    function validateAmountFunction(uint256 _aNumber, bytes memory _signature) internal view returns(address){
+    function validateAmountFunction(string memory _aString, bytes memory _signature) internal view returns(address){
         bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(
-            keccak256("Number(uint256 aNumber)"),
-            _aNumber
+            keccak256("Number(string aString)"),
+            keccak256(bytes(_aString))
         )));
         address signer = ECDSA.recover(digest, _signature);
         require(signer == msg.sender, "MessageVerifier: invalid signature");
@@ -31,10 +49,9 @@ contract RandomNumber is EIP712{
         return signer;
   }
 
-    function _getRandomNumberInRange(uint _tokenFromUniswap, uint _from, uint _to, bytes memory _signature) public  {
+    function _getRandomNumberInRange(string memory _tokenFromUniswap, uint _from, uint _to, bytes memory _signature) external view returns(uint)  {
         require(_to > _from, "Range is not valid");
         require(validateAmountFunction(_tokenFromUniswap, _signature) == msg.sender, "Not invalid");
-        ++randNonce;
         uint randomNumber = uint(
             keccak256(
                 abi.encodePacked(
@@ -43,7 +60,7 @@ contract RandomNumber is EIP712{
                             block.number,
                             block.difficulty,
                             block.timestamp,
-                            randNonce,
+                            msg.sender,
                             seed,
                             _tokenFromUniswap
                         )
@@ -51,6 +68,46 @@ contract RandomNumber is EIP712{
                 )
             )
         ) % (_to - _from + 1);
-        emit GetRandomNumber(msg.sender, randomNumber + _from);
+       return randomNumber + _from;
+    }
+
+     function requestRandomWords()
+        external
+        onlyOwner
+        returns (uint256 requestId)
+    {
+        // Will revert if subscription is not set and funded.
+        requestId = COORDINATOR.requestRandomWords(
+            keyHash,
+            s_subscriptionId,
+            requestConfirmations,
+            callbackGasLimit,
+            numWords
+        );
+        s_requests[requestId] = RequestStatus({
+            randomWords: new uint256[](0),
+            exists: true,
+            fulfilled: false
+        });
+        requestIds.push(requestId);
+        lastRequestId = requestId;
+        return requestId;
+    }
+
+    function fulfillRandomWords(
+        uint256 _requestId,
+        uint256[] memory _randomWords
+    ) internal override {
+        require(s_requests[_requestId].exists, "request not found");
+        s_requests[_requestId].fulfilled = true;
+        s_requests[_requestId].randomWords = _randomWords;
+    }
+
+    function getRequestStatus(
+        uint256 _requestId
+    ) external view returns (bool fulfilled, uint256[] memory randomWords) {
+        require(s_requests[_requestId].exists, "request not found");
+        RequestStatus memory request = s_requests[_requestId];
+        return (request.fulfilled, request.randomWords);
     }
 }

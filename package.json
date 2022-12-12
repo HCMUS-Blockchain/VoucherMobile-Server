@@ -7,6 +7,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.5.1",
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@openzeppelin/contracts": "^4.8.0",
     "axios": "^1.2.0",
