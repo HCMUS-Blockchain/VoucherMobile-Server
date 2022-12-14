@@ -14,6 +14,7 @@ const compaignRouter = require('./routes/campaign');
 const gameRouter = require('./routes/game');
 const categoryRouter = require('./routes/category');
 const counterpartRouter = require('./routes/counterpart');
+const puzzleRouter = require('./routes/puzzle');
 const app = express();
 
 
@@ -36,6 +37,7 @@ app.use('/campaign',compaignRouter)
 app.use('/game',gameRouter)
 app.use('/category',categoryRouter)
 app.use('/counterpart',counterpartRouter)
+app.use('/puzzle',puzzleRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
