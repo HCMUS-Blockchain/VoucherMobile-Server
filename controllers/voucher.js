@@ -4,6 +4,7 @@ const {getRandomNumberBaseOnUniswap} = require("../scripts/getRandomNumber");
 const Category = require('../models/category');
 const Game = require("../models/game");
 const {findPointAndDiscount} = require("./game");
+const Puzzle = require('../models/puzzle');
 exports.createVoucher = async (req, res) => {
     try {
         const voucher = new Voucher(req.body);
@@ -89,35 +90,62 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
     }
 }
 
+//getVoucher
 exports.playGame = async (req, res) => {
     try {
-        const {userId, points, gameType, campaignId} = req.body;
-        const game = await Game.findOne({name: gameType})
-        let {pointRs, discountRs} = findPointAndDiscount(points, game)
-        const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
-        if (countVoucher.length > 0) {
-            const voucher_ = countVoucher[0];
-            await setVoucherInformation(voucher_._id, gameType, new Date());
-            await User.findByIdAndUpdate(userId, {
-                $push: {vouchers: voucher_._id},
-                new: true,
-                useFindAndModify: false
-            });
-            getRandomNumberBaseOnUniswap().then(async (x) => {
-                console.log(x);
-                const voucher = await Voucher.findByIdAndUpdate(voucher_._id, {code: x}, {
+        const {points, gameType, campaignId} = req.body;
+        const userId = req.user._id
+        const user = await User.findById(userId);
+        if (user) {
+            const game = await Game.findOne({name: gameType})
+            let {pointRs, discountRs} = findPointAndDiscount(points, game)
+            const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
+            if (countVoucher.length > 0) {
+                const voucher_ = countVoucher[0];
+                await setVoucherInformation(voucher_._id, gameType, new Date());
+                await User.findByIdAndUpdate(userId, {
+                    $push: {vouchers: voucher_._id},
                     new: true,
                     useFindAndModify: false
                 });
-                res.status(201).send({
-                    success: true, message: 'Voucher added successfully',
-                    voucher
+                getRandomNumberBaseOnUniswap().then(async (x) => {
+                    console.log(x);
+                    const voucher = await Voucher.findByIdAndUpdate(voucher_._id, {code: x}, {
+                        new: true,
+                        useFindAndModify: false
+                    });
+                    res.status(201).send({
+                        success: true, message: 'Voucher added successfully',
+                        voucher
+                    });
+                }).catch((e) => {
+                    res.status(400).send({success: false, message: e.message});
                 });
-            }).catch((e) => {
-                res.status(400).send({success: false, message: e.message});
-            });
+            } else {
+                res.status(400).send({success: false, message: 'No voucher available'});
+            }
         } else {
-            res.status(400).send({success: false, message: 'No voucher available'});
+            res.status(400).send({success: false, message: 'No user'});
+        }
+    } catch (e) {
+        res.status(400).send({success: false, message: e.message});
+    }
+}
+
+//getPuzzle
+exports.playPuzzle = async (req, res) => {
+    try {
+        const puzzle = req.body;
+        const userId = req.user._id
+        const user = await User.findById(userId);
+        if (user) {
+            const newPuzzle = await Puzzle.findOneAndUpdate({
+                user: user._id,
+                name: puzzle.name
+            }, puzzle, {new: true, upsert: true})
+            res.status(200).send({success: true, message: 'Get all vouchers successfully', newPuzzle});
+        } else {
+            res.status(400).send({success: false, message: 'User not found'});
         }
     } catch (e) {
         res.status(400).send({success: false, message: e.message});
