@@ -34,14 +34,10 @@ t
 Dartifacts/@openzeppelin/contracts/utils/Strings.sol/Strings.dbg.json,3\5\35c1f2a18f493dc41acc588e5526500f1954de9c
 p
 @artifacts/@openzeppelin/contracts/utils/Strings.sol/Strings.json,d\a\dad9a6891f55d368c10a2c3c939a9231935fb07c
-C
-middlewares/auth.js,6\e\6ef1f1734a4970e0bcd86633dd049a66965633e3
 A
 hardhat.config.js,4\2\429ab70247c64d2d87d4dac6787a6e4a9fb2ede2
 <
 models/db.js,7\5\7524c339d74e3fad31731ed3d74a05a9611c8199
-?
-routes/index.js,3\0\30dfc417d69af8ed298ed4111dcab68f38ca7f54
 G
 controllers/campaign.js,8\f\8fd541485f957e1eb3450087cbde369070df033c
 E
@@ -76,8 +72,6 @@ J
 models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
 B
 routes/campaign.js,0\8\08da4a5d36f55ee150720bf86d2040c794ffffc1
-C
-controllers/user.js,9\3\93e97096bbeb10b30c0c53947364edd9141014a4
 C
 controllers/game.js,e\f\ef0697849438ef887902e79e552879ea92ccdd30
 ?
