@@ -11,7 +11,6 @@ exports.createUser = async (req, res) => {
 exports.userSignIn = async (req, res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email});
-    console.log("user", user);
     if (!user) return res.status(400).send({'error': 'User not found'});
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) return res.status(400).send({'error': 'Password is incorrect'});

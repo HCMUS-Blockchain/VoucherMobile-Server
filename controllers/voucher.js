@@ -79,7 +79,6 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
             const vouchersFind = await Voucher.find().populate('campaign');
-            console.log(vouchersFind)
             const vouchers = vouchersFind.filter(voucher => {
                 return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.shop.toLowerCase().includes(keyword.toLowerCase());
             })
@@ -147,15 +146,18 @@ exports.playPuzzle = async (req, res) => {
                     if (puzzleGetByUserId) {
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleGetByUserId);
                         puzzleGetByUserId[piece].quantity = puzzleGetByUserId[piece].quantity + 1;
+                        puzzleGetByUserId[piece].id.push(x)
                         const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id,puzzleGetByUserId,
                             {
                                 new: true,
                                 useFindAndModify: false
                             })
+                        const img = result[piece].img;
                         res.status(201).send({
                             success: true, message: 'successfully', data: {
                                 convertInRange,
                                 piece,
+                                img,
                                 result
                             }
                         });
@@ -171,19 +173,23 @@ exports.playPuzzle = async (req, res) => {
                             piece_7:puzzleMapDb.piece_7,
                             piece_8:puzzleMapDb.piece_8,
                             piece_9:puzzleMapDb.piece_9,
+                            name: puzzleMapDb.name
                         }
                         const puzzleAdding = await Puzzle.create(newPuzzle);
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleAdding);
                         puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
+                        puzzleAdding[piece].id.push(x)
                         const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id,puzzleAdding,
                             {
                                 new: true,
                                 useFindAndModify: false
                             })
+                        const img = result[piece].img;
                         res.status(201).send({
                             success: true, message: 'successfully', data: {
                                 convertInRange,
                                 piece,
+                                img,
                                 result
                             }
                         });
