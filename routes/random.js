@@ -21,7 +21,6 @@ router.get('/uniswap', isAuth, (req, res) => {
 router.get('/chainlink', isAuth, async (req, res) => {
     try {
         const signChecking = await callRandomGenerationFunction()
-        console.log(signChecking)
         const setTimer = setInterval(async () => {
             const rs = await checkRandomNumber(signChecking);
             console.log(rs)

@@ -79,7 +79,6 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
             const vouchersFind = await Voucher.find().populate('campaign');
-            console.log(vouchersFind)
             const vouchers = vouchersFind.filter(voucher => {
                 return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.shop.toLowerCase().includes(keyword.toLowerCase());
             })
@@ -135,20 +134,92 @@ exports.playGame = async (req, res) => {
 //getPuzzle
 exports.playPuzzle = async (req, res) => {
     try {
-        const puzzle = req.body;
+        const {name} = req.body;
         const userId = req.user._id
-        const user = await User.findById(userId);
-        if (user) {
-            const newPuzzle = await Puzzle.findOneAndUpdate({
-                user: user._id,
-                name: puzzle.name
-            }, puzzle, {new: true, upsert: true})
-            res.status(200).send({success: true, message: 'Get all vouchers successfully', newPuzzle});
+        const puzzleMapDb = await Puzzle.findOne({name})
+        if (puzzleMapDb) {
+            const user = await User.findById(userId);
+            if (user) {
+                getRandomNumberBaseOnUniswap().then(async (x) => {
+                    const convertInRange = findRangeOfRandomNumber(1, 105, x);
+                    const puzzleGetByUserId = await Puzzle.findOne({user: userId});
+                    if (puzzleGetByUserId) {
+                        const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleGetByUserId);
+                        puzzleGetByUserId[piece].quantity = puzzleGetByUserId[piece].quantity + 1;
+                        puzzleGetByUserId[piece].id.push(x)
+                        const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id,puzzleGetByUserId,
+                            {
+                                new: true,
+                                useFindAndModify: false
+                            })
+                        const img = result[piece].img;
+                        res.status(201).send({
+                            success: true, message: 'successfully', data: {
+                                convertInRange,
+                                piece,
+                                img,
+                                result
+                            }
+                        });
+                    } else {
+                        const newPuzzle = {
+                            user: userId,
+                            piece_1:puzzleMapDb.piece_1,
+                            piece_2:puzzleMapDb.piece_2,
+                            piece_3:puzzleMapDb.piece_3,
+                            piece_4:puzzleMapDb.piece_4,
+                            piece_5:puzzleMapDb.piece_5,
+                            piece_6:puzzleMapDb.piece_6,
+                            piece_7:puzzleMapDb.piece_7,
+                            piece_8:puzzleMapDb.piece_8,
+                            piece_9:puzzleMapDb.piece_9,
+                            name: puzzleMapDb.name
+                        }
+                        const puzzleAdding = await Puzzle.create(newPuzzle);
+                        const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleAdding);
+                        puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
+                        puzzleAdding[piece].id.push(x)
+                        const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id,puzzleAdding,
+                            {
+                                new: true,
+                                useFindAndModify: false
+                            })
+                        const img = result[piece].img;
+                        res.status(201).send({
+                            success: true, message: 'successfully', data: {
+                                convertInRange,
+                                piece,
+                                img,
+                                result
+                            }
+                        });
+                    }
+                }).catch((e) => {
+                    res.status(400).send({success: false, message: e.message});
+                });
+            } else {
+                res.status(400).send({success: false, message: 'User not found'});
+            }
         } else {
-            res.status(400).send({success: false, message: 'User not found'});
+            res.status(400).send({success: false, message: 'Puzzle not found'});
         }
     } catch (e) {
         res.status(400).send({success: false, message: e.message});
+    }
+}
+
+
+const findRangeOfRandomNumber = (min, max, randNumber) => {
+    let range = max - min + 1;
+    return randNumber % range + min;
+}
+
+const checkRarityAndReturnPuzzle = (rarity, object) => {
+    for (let i = 1; i <= 9; i++) {
+        const nameProps = 'piece_' + i;
+        if (object[nameProps].min <= rarity && object[nameProps].max >= rarity) {
+            return nameProps
+        }
     }
 }
 

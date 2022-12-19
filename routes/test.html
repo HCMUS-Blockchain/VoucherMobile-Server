@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Wendy+One);
+
+        body {
+            font-family: "Wendy One", sans-serif;
+            background-color: #EDE9DE;
+        }
+
+        .gift {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            transform: translate3d(-50%, -50%, 0);
+        }
+
+        .gift-top {
+            position: relative;
+            width: 110%;
+            height: 25%;
+            background: #F54537;
+            border-radius: 5px 5px 0 0;
+            transform: translate3d(-5%, 0, 0);
+            background-image: linear-gradient(to right, #F54537 0%, #F54537 44%, #FFC113 44%, #FFC113 56%, #F54537 56%, #F54537 100%);
+        }
+
+        .gift-top::before,
+        .gift-top::after {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border: 10px solid #FFC113;
+            border-radius: 50% 50% 0 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate3d(-100%, -100%, 0) skew(10deg, 10deg);
+        }
+
+        .gift-top::after {
+            border-radius: 50% 50% 50% 0;
+            transform: translate3d(0, -100%, 0) skew(-10deg, -10deg);
+        }
+
+        .gift-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: 0;
+            color: #333333;
+            white-space: nowrap;
+            transform: translate3d(-50%, -50%, 0) scale(.5);
+            transform-origin: center center;
+            z-index: -1;
+        }
+
+        .gift-box {
+            width: 100%;
+            height: 75%;
+            background-image: linear-gradient(to right, #D43130 0%, #D43130 45%, #FF900A 45%, #FF900A 55%, #D43130 55%, #D43130 100%);
+            border-radius: 0 0 5px 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="gift">
+    <div class="gift-top"></div>
+    <h1 class="gift-text">&#128512; B-DAY!</h1>
+    <div class="gift-box"></div>
+</div>
+<script>
+    // Original code from Marcel Freinbichler
+    // https://github.com/freinbichler/3d-touch
+
+    var gift = document.getElementsByClassName('gift')[0];
+    var giftText = document.getElementsByClassName('gift-text')[0];
+    var giftTop = document.getElementsByClassName('gift-top')[0];
+    var touch = null;
+
+    addForceTouchToElement(gift);
+
+    function onTouchStart (e) {
+        e.preventDefault();
+        checkForce(e);
+    }
+
+    function onTouchMove (e) {
+        e.preventDefault();
+        checkForce(e);
+    }
+
+    function onTouchEnd (e) {
+        e.preventDefault();
+        touch = null;
+    }
+
+    function checkForce (e) {
+        touch = e.touches[0];
+        setTimeout(refreshForceValue.bind(touch), 10);
+    }
+
+    function refreshForceValue () {
+        var touchEvent = this;
+        var forceValue = 0;
+        if (touchEvent) {
+            forceValue = touchEvent.force || 0;
+            setTimeout(refreshForceValue.bind(touch), 10);
+        } else {
+            forceValue = 0;
+        }
+
+        renderElement(forceValue);
+    }
+
+    function renderElement (forceValue) {
+        giftTop.style.webkitTransform = 'translate3d(-5%, -'+ (forceValue * 1000) +'%, 0) rotate(-' + (forceValue * 100) + 'deg)';
+        giftText.style.webkitTransform = 'translate3d(-50%, -'+ (50 + forceValue * 300) +'%, 0) scale(' + (.5 + forceValue * 1.5) + ')';
+    }
+
+    function addForceTouchToElement (elem) {
+        elem.addEventListener('touchstart', onTouchStart, false);
+        elem.addEventListener('touchmove', onTouchMove, false);
+        elem.addEventListener('touchend', onTouchEnd, false);
+    }
+
+</script>
+</body>
+</html>
