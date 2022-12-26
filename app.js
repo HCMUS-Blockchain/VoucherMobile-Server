@@ -15,6 +15,7 @@ const gameRouter = require('./routes/game');
 const categoryRouter = require('./routes/category');
 const counterpartRouter = require('./routes/counterpart');
 const puzzleRouter = require('./routes/puzzle');
+const historyRouter = require('./routes/history')
 const app = express();
 
 
@@ -37,6 +38,7 @@ app.use('/game',gameRouter)
 app.use('/category',categoryRouter)
 app.use('/counterpart',counterpartRouter)
 app.use('/puzzle',puzzleRouter)
+app.use('/history',historyRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));

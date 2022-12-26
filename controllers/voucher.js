@@ -147,6 +147,11 @@ exports.playPuzzle = async (req, res) => {
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleGetByUserId);
                         puzzleGetByUserId[piece].quantity = puzzleGetByUserId[piece].quantity + 1;
                         puzzleGetByUserId[piece].id.push(x)
+                        const imgPiece= puzzleGetByUserId[piece].img;
+                        puzzleGetByUserId.lastPieceReceived = {
+                            piece,
+                            img:imgPiece
+                        }
                         const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id,puzzleGetByUserId,
                             {
                                 new: true,
@@ -162,6 +167,7 @@ exports.playPuzzle = async (req, res) => {
                             }
                         });
                     } else {
+                        console.log(puzzleMapDb)
                         const newPuzzle = {
                             user: userId,
                             piece_1:puzzleMapDb.piece_1,
@@ -173,12 +179,18 @@ exports.playPuzzle = async (req, res) => {
                             piece_7:puzzleMapDb.piece_7,
                             piece_8:puzzleMapDb.piece_8,
                             piece_9:puzzleMapDb.piece_9,
-                            name: puzzleMapDb.name
+                            name: puzzleMapDb.name,
+                            lastPieceReceived: puzzleMapDb.lastPieceReceived
                         }
                         const puzzleAdding = await Puzzle.create(newPuzzle);
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleAdding);
                         puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
                         puzzleAdding[piece].id.push(x)
+                        const imgPiece= puzzleAdding[piece].img;
+                        puzzleAdding.lastPieceReceived = {
+                            piece,
+                            img:imgPiece
+                        }
                         const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id,puzzleAdding,
                             {
                                 new: true,

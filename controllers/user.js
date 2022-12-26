@@ -16,7 +16,9 @@ exports.userSignIn = async (req, res) => {
     if (!isPasswordMatch) return res.status(400).send({'error': 'Password is incorrect'});
     const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET,
         {expiresIn: '1d'})
-    let oldTokens = user.tokens || [];
+
+    //save tokens
+    /*let oldTokens = user.tokens || [];
 
     if (oldTokens.length) {
         oldTokens = oldTokens.filter(t => {
@@ -30,7 +32,7 @@ exports.userSignIn = async (req, res) => {
     const newToken = {
         tokens: [...oldTokens, {token, signedAt: Date.now().toString()}]
     }
-    await User.findByIdAndUpdate(user._id, newToken);
+    await User.findByIdAndUpdate(user._id, newToken);*/
 
     return res.json({success: true, user, token})
 }
@@ -77,5 +79,28 @@ exports.uploadAvatar = async (req, res) => {
             .status(500)
             .json({success: false, message: 'server error, try after some time'});
         console.log('Error while uploading profile image', e.message);
+    }
+}
+
+exports.checkUserExistByEmail = async (req,res) =>{
+    console.log(req.body)
+    const userEmail = req.body.email
+    try{
+        if(userEmail){
+            const user= await User.findOne({email:userEmail})
+            if (user){
+                res
+                    .status(201)
+                    .json({success: true, message: user});
+            }else res
+                .status(500)
+                .json({success: false, message: 'can not find user id'});
+        }else res
+            .status(500)
+            .json({success: false, message: 'can not find user id'});
+    }catch (e) {
+        res
+            .status(500)
+            .json({success: false, message: e.message});
     }
 }

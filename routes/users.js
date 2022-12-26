@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, userSignIn, signOut, uploadAvatar} = require('../controllers/user');
+const {createUser, userSignIn, signOut, uploadAvatar, checkUserExist, checkUserExistByEmail} = require('../controllers/user');
 const {validateUserSignUp, userValidationResult, validateUserSignIn} = require('../middlewares/validation/user');
 const {isAuth} = require("../middlewares/auth");
 //add user
@@ -37,4 +37,5 @@ router.post('/upload-profile', isAuth, uploads.single('profile'),uploadAvatar)
 router.get('/', (req, res) => {
     res.send('Welcome to the API')
 })
+router.post('/check-user-exist',isAuth,checkUserExistByEmail)
 module.exports = router;

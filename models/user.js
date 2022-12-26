@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     avatar: String,
-    tokens: [{ type: Object }],
     vouchers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Voucher' }],
 });
 userSchema.pre('save', async function (next) {
