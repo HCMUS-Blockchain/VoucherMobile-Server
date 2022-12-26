@@ -34,7 +34,12 @@ exports.userSignIn = async (req, res) => {
     }
     await User.findByIdAndUpdate(user._id, newToken);*/
 
-    return res.json({success: true, user, token})
+    return res.json({success: true, user:{
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email
+        }
+        , token})
 }
 exports.signOut = async (req, res) => {
     if (req.headers && req.headers.authorization) {
