@@ -1,10 +1,19 @@
-const express = require('express');
-const {createGame, getDataQuizGame, getGameInfor} = require("../controllers/game");
-const {isAuth} = require("../middlewares/auth");
+const express = require("express");
+const {
+  createGame,
+  getOnceGame,
+  updateGame,
+  createQuiz,
+  getOnceQuiz,
+  getAllQuiz,
+} = require("../controllers/game");
 const router = express.Router();
 
+router.post("/", createGame);
+router.get("/collection", getAllQuiz);
+router.get("/:id", getOnceGame);
+router.put("/", updateGame);
+router.post("/collection", createQuiz);
+router.get("/collection/:id", getOnceQuiz);
 
-router.post('/create', isAuth, createGame)
-router.get('/getDataQuizGame', isAuth,getDataQuizGame)
-router.post('/get', isAuth,getGameInfor)
 module.exports = router;

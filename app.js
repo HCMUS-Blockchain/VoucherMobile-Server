@@ -26,17 +26,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/vouchers", vouchersRouter);
-app.use("/random", randomRouter);
-app.use("/api", compaignRouter);
-app.use("/game", gameRouter);
-app.use("/category", categoryRouter);
-app.use("/counterpart", counterpartRouter);
-app.use("/puzzle", puzzleRouter);
+const base = "/api";
+app.use(base + "/", indexRouter);
+app.use(base + "/vouchers", vouchersRouter);
+app.use(base + "/random", randomRouter);
+app.use(base + "/campaigns", compaignRouter);
+app.use(base + "/games", gameRouter);
+app.use(base + "/category", categoryRouter);
+app.use(base + "/counterpart", counterpartRouter);
+app.use(base + "/puzzle", puzzleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

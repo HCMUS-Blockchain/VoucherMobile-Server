@@ -1,49 +1,88 @@
-const Game = require('../models/game');
+const Game = require("../models/game");
+const Quiz = require("../models/quiz");
 exports.createGame = async (req, res) => {
-    const {name, data, pointAverage} = req.body;
-    const newGame = new Game({name, data, pointAverage});
-    try {
-        await newGame.save();
-        return res.status(201).send({success: true, message: 'Game created successfully!'});
-    } catch (e) {
-        return res.status(400).send({success: false, message: e.message});
-    }
-}
+  try {
+    let body = {};
+    body.pointAverage = JSON.parse(req.body.pointAverage);
+    body.name = req.body.id;
+    body.id = req.body.id;
+    const game = new Game(body);
+    await game.save();
+    res
+      .status(201)
+      .send({ success: true, message: "Campaign created successfully" });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
 
-exports.getDataQuizGame = async (req, res) => {
-    try{
-        const game = await Game.findOne({name: 'Quiz Game'})
-        const data = game.data
-        res.status(200).send({success: true, message: 'Get data quiz game successfully', data});
-    }catch (e) {
-        res.status(400).send({success: false, message: e.message});
-    }
-}
+exports.getOnceGame = async (req, res) => {
+  try {
+    const game = await Game.find({ id: req.params.id });
+    res.status(200).send({
+      success: true,
+      message: "Get a game successfully",
+      game,
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
 
-exports.getGameInfor = async (req, res) => {
-    try{
-        const name = req.body.name
-        const game = await Game.findOne({name})
-        res.status(200).send({success: true, message: 'Get data quiz game successfully', game});
-    }catch (e) {
-        res.status(400).send({success: false, message: e.message});
-    }
-}
+exports.updateGame = async (req, res) => {
+  try {
+    await Game.updateOne(
+      { id: req.body.id },
+      { $set: { pointAverage: JSON.parse(req.body.pointAverage) } }
+    );
+    res.status(200).send({
+      success: true,
+      message: "Update a game successfully",
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
 
-exports.findPointAndDiscount= (point,game) => {
-    let pointRs=0, discountRs=0
-    for (let i = 0; i < game.pointAverage.length; i++) {
-        if (point < game.pointAverage[i].point) {
-            if (i-1 >= 0) {
-                pointRs = game.pointAverage[i-1].point
-                discountRs = game.pointAverage[i-1].discount
-            }
-            else {
-                pointRs = game.pointAverage[i].point
-                discountRs = 0
-            }
-            break
-        }
-    }
-    return {pointRs, discountRs}
-}
+// --------------------------------------------
+exports.createQuiz = async (req, res) => {
+  try {
+    req.body.questions = JSON.parse(req.body.questions);
+    console.log(req.body);
+    const quiz = new Quiz(req.body);
+
+    await quiz.save();
+    res
+      .status(201)
+      .send({ success: true, message: "Quiz created successfully" });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.getOnceQuiz = async (req, res) => {
+  try {
+    const quiz = await Quiz.find({ _id: req.params.id });
+    res.status(200).send({
+      success: true,
+      message: "Get a quiz successfully",
+      quiz,
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.getAllQuiz = async (req, res) => {
+  try {
+    const quizzes = await Quiz.find();
+    res.status(200).send({
+      success: true,
+      message: "Get all quizzes successfully",
+      quizzes,
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
