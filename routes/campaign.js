@@ -1,7 +1,20 @@
-const express = require('express');
-const {createCampaign} = require("../controllers/campaign");
-const {isAuth} = require("../middlewares/auth");
+const express = require("express");
+
+const {
+  createCampaign,
+  getAllCampaigns,
+  getOneCampaign,
+  updateCampaign,
+  deleteMultipleCampaign,
+  deleteSingleCampaign,
+} = require("../controllers/campaign");
 const router = express.Router();
 
-router.post('/create', isAuth, createCampaign);
+router.get("/", getAllCampaigns);
+router.post("/", createCampaign);
+router.get("/:id", getOneCampaign);
+router.put("/", updateCampaign);
+router.delete("/", deleteMultipleCampaign);
+router.delete("/:id", deleteSingleCampaign);
+
 module.exports = router;
