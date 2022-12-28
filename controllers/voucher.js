@@ -97,6 +97,7 @@ exports.playGame = async (req, res) => {
         const user = await User.findById(userId);
         if (user) {
             const gameFinding = await Game.findOne({id: campaignId})
+            console.log(gameFinding)
             const gamePoint = gameFinding.pointAverage
             const game = gamePoint[gameType]
             let {pointRs, discountRs} = findPointAndDiscount(points, game)

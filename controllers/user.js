@@ -38,12 +38,6 @@ exports.signOut = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Authorization fail!" });
     }
-
-    const tokens = req.user.tokens;
-
-    const newTokens = tokens.filter((t) => t.token !== token);
-
-    await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
     res.json({ success: true, message: "Sign out successfully!" });
   }
 };
@@ -84,13 +78,19 @@ exports.getProfileUser = async (req, res) => {
     const authHeader = req.headers.authorization;
     const [tokenType, accessToken] = authHeader.split(" ");
     const payload = jwt.decode(accessToken);
+    const user = await User.findById(payload._id);
+    if (!user) return res.status(400).send({ error: "User not found" });
     return res.status(200).json({
-      _id: payload._id,
-      email: payload.email,
-      fullName: payload.fullName,
+      success: true,
+      _id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      avatar: user.avatar,
     });
   } catch (error) {
     console.log("failed to parse token", error);
-    return res.status(400).json({ message: "Failed to parse token." });
+    return res.status(400).json({
+      success: false,
+      message: "Failed to parse token." });
   }
 };
