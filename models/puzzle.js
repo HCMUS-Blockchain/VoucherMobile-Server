@@ -33,6 +33,9 @@ const puzzleSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
+    },
+    lastPieceReceived: {
+        type: Object,
     }
 })
 module.exports = mongoose.model('Puzzle', puzzleSchema);
