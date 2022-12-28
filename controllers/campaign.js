@@ -2,6 +2,7 @@ const Campaign = require("../models/campaign");
 
 exports.createCampaign = async (req, res) => {
   try {
+    req.body.userID = req.user._id;
     const campaign = new Campaign(req.body);
     await campaign.save();
     res
@@ -14,7 +15,7 @@ exports.createCampaign = async (req, res) => {
 
 exports.getAllCampaigns = async (req, res) => {
   try {
-    const campaigns = await Campaign.find();
+    const campaigns = await Campaign.find({ userID: req.user._id });
     res.status(200).send({
       success: true,
       message: "Get all campaigns successfully",
@@ -28,11 +29,19 @@ exports.getAllCampaigns = async (req, res) => {
 exports.getOneCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
-    res.status(200).send({
-      success: true,
-      message: "Get a campaign successfully",
-      campaign,
-    });
+    if (campaign.userID.valueOf() === req.user._id.valueOf()) {
+      res.status(200).send({
+        success: true,
+        message: "Get a campaign successfully",
+        campaign,
+      });
+    } else {
+      res.status(400).send({
+        success: true,
+        message: "You dont't have permisstion to get a campaign",
+        campaign,
+      });
+    }
   } catch (e) {
     res.status(400).send({ success: false, message: e.message });
   }
@@ -40,7 +49,9 @@ exports.getOneCampaign = async (req, res) => {
 
 exports.updateCampaign = async (req, res) => {
   try {
-    await Campaign.findByIdAndUpdate(req.body._id, req.body);
+    await Campaign.find({
+      $and: [{ userID: req.user._id }, { _id: req.body._id }],
+    }).updateOne(req.body);
     res.status(200).send({
       success: true,
       message: "Update a campaign successfully",
@@ -53,7 +64,9 @@ exports.updateCampaign = async (req, res) => {
 exports.deleteMultipleCampaign = async (req, res) => {
   try {
     const listID = Object.values(req.query);
-    await Campaign.deleteMany({ _id: { $in: listID } });
+    await Campaign.find({
+      $and: [{ _id: { $in: listID } }, { userID: req.user._id }],
+    }).deleteMany();
     res.status(200).send({
       success: true,
       message: "Delete a campaign's list successfully",
@@ -65,7 +78,9 @@ exports.deleteMultipleCampaign = async (req, res) => {
 
 exports.deleteSingleCampaign = async (req, res) => {
   try {
-    await Campaign.deleteMany({ _id: req.params.id });
+    await Campaign.find({
+      $and: [{ userID: req.user._id }, { _id: req.params.id }],
+    }).deleteOne();
     res.status(200).send({
       success: true,
       message: "Delete a campaign successfully",

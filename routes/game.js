@@ -6,14 +6,17 @@ const {
   createQuiz,
   getOnceQuiz,
   getAllQuiz,
+  updateQuiz,
 } = require("../controllers/game");
+const { isAuth, isCounterpart } = require("../middlewares/auth");
 const router = express.Router();
 
-router.post("/", createGame);
-router.get("/collection", getAllQuiz);
-router.get("/:id", getOnceGame);
-router.put("/", updateGame);
-router.post("/collection", createQuiz);
-router.get("/collection/:id", getOnceQuiz);
+router.post("/collection", isAuth, isCounterpart, createQuiz);
+router.put("/collection", isAuth, isCounterpart, updateQuiz);
+router.get("/collection/:id", isAuth, isCounterpart, getOnceQuiz);
+router.get("/collection", isAuth, isCounterpart, getAllQuiz);
+router.get("/:id", isAuth, isCounterpart, getOnceGame);
+router.post("/", isAuth, isCounterpart, createGame);
+router.put("/", isAuth, isCounterpart, updateGame);
 
 module.exports = router;

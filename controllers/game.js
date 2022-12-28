@@ -48,13 +48,25 @@ exports.updateGame = async (req, res) => {
 exports.createQuiz = async (req, res) => {
   try {
     req.body.questions = JSON.parse(req.body.questions);
-    console.log(req.body);
     const quiz = new Quiz(req.body);
 
     await quiz.save();
     res
       .status(201)
       .send({ success: true, message: "Quiz created successfully" });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.updateQuiz = async (req, res) => {
+  try {
+    req.body.questions = JSON.parse(req.body.questions);
+    await Quiz.updateOne({ _id: req.body._id }, req.body);
+    res
+      .status(201)
+      .send({ success: true, message: "Quiz updated successfully" });
   } catch (e) {
     console.log(e);
     res.status(400).send({ success: false, message: e.message });

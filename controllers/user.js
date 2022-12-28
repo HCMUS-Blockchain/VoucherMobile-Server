@@ -19,17 +19,14 @@ exports.userSignIn = async (req, res) => {
   const isPasswordMatch = await user.comparePassword(password);
   if (!isPasswordMatch)
     return res.status(400).send({ error: "Password is incorrect" });
-  const token = jwt.sign(
-    { _id: user._id, fullName: user.fullName, email: user.email },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: SECONDS_PER_DAY,
-    }
-  );
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: SECONDS_PER_DAY,
+  });
   const expiredAt = new Date(Date.now() + SECONDS_PER_DAY * 1000).getTime();
 
   return res.json({ success: true, user, token, expiredAt: expiredAt });
 };
+
 exports.signOut = async (req, res) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
@@ -84,13 +81,20 @@ exports.getProfileUser = async (req, res) => {
     const authHeader = req.headers.authorization;
     const [tokenType, accessToken] = authHeader.split(" ");
     const payload = jwt.decode(accessToken);
+    const user = await User.findById(payload._id);
+    if (!user) return res.status(400).send({ error: "User not found" });
     return res.status(200).json({
-      _id: payload._id,
-      email: payload.email,
-      fullName: payload.fullName,
+      success: true,
+      _id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      // avatar: user.avatar,
     });
   } catch (error) {
     console.log("failed to parse token", error);
-    return res.status(400).json({ message: "Failed to parse token." });
+    return res.status(400).json({
+      success: false,
+      message: "Failed to parse token.",
+    });
   }
 };

@@ -19,14 +19,6 @@ router.post("/signin", validateUserSignIn, userValidationResult, userSignIn);
 router.get("/signout", isAuth, signOut);
 router.get("/profile", isAuth, getProfileUser);
 
-//get profile
-// router.get("/profile", isAuth, (req, res) => {
-//   if (!req.user) return res.status(400).send({ error: "User not found" });
-//   return res.json({
-//     success: true,
-//     profile: req.user,
-//   });
-// });
 const multer = require("multer");
 const storage = multer.diskStorage({});
 const fileFilter = (req, file, cb) => {

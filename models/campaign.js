@@ -25,7 +25,11 @@ const campaignSchema = new mongoose.Schema({
   status: {
     type: String,
   },
-
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   // shop:{
   //     type: String,
   // },
