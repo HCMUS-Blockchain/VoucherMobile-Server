@@ -96,8 +96,10 @@ exports.playGame = async (req, res) => {
         const userId = req.user._id
         const user = await User.findById(userId);
         if (user) {
-            const game = await Game.findOne({name: gameType})
-            let {pointRs, discountRs} = findPointAndDiscount(points, game)
+            const game = await Game.findOne({id: campaignId})
+            const gameAverage= game.pointAverage
+            console.log(gameAverage.length)
+            let {pointRs, discountRs} = findPointAndDiscount(points, gameFinding)
             const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
             if (countVoucher.length > 0) {
                 const voucher_ = countVoucher[0];
@@ -147,6 +149,11 @@ exports.playPuzzle = async (req, res) => {
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleGetByUserId);
                         puzzleGetByUserId[piece].quantity = puzzleGetByUserId[piece].quantity + 1;
                         puzzleGetByUserId[piece].id.push(x)
+                        const imgPiece= puzzleGetByUserId[piece].img;
+                        puzzleGetByUserId.lastPieceReceived = {
+                            piece,
+                            img:imgPiece
+                        }
                         const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id,puzzleGetByUserId,
                             {
                                 new: true,
@@ -162,6 +169,7 @@ exports.playPuzzle = async (req, res) => {
                             }
                         });
                     } else {
+                        console.log(puzzleMapDb)
                         const newPuzzle = {
                             user: userId,
                             piece_1:puzzleMapDb.piece_1,
@@ -173,12 +181,18 @@ exports.playPuzzle = async (req, res) => {
                             piece_7:puzzleMapDb.piece_7,
                             piece_8:puzzleMapDb.piece_8,
                             piece_9:puzzleMapDb.piece_9,
-                            name: puzzleMapDb.name
+                            name: puzzleMapDb.name,
+                            lastPieceReceived: puzzleMapDb.lastPieceReceived
                         }
                         const puzzleAdding = await Puzzle.create(newPuzzle);
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleAdding);
                         puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
                         puzzleAdding[piece].id.push(x)
+                        const imgPiece= puzzleAdding[piece].img;
+                        puzzleAdding.lastPieceReceived = {
+                            piece,
+                            img:imgPiece
+                        }
                         const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id,puzzleAdding,
                             {
                                 new: true,
