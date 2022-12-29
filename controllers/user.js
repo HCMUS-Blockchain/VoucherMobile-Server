@@ -85,7 +85,7 @@ exports.getProfileUser = async (req, res) => {
       _id: user._id,
       email: user.email,
       fullName: user.fullName,
-      avatar: user.avatar,
+      avatar: user.avatar
     });
   } catch (error) {
     console.log("failed to parse token", error);
@@ -94,3 +94,25 @@ exports.getProfileUser = async (req, res) => {
       message: "Failed to parse token." });
   }
 };
+
+exports.checkUserExistByEmail = async (req,res) =>{
+  const userEmail = req.body.email
+  try{
+    if(userEmail){
+      const user= await User.findOne({email:userEmail})
+      if (user){
+        res
+            .status(201)
+            .json({success: true, message: user});
+      }else res
+          .status(500)
+          .json({success: false, message: 'can not find user id'});
+    }else res
+        .status(500)
+        .json({success: false, message: 'can not find user id'});
+  }catch (e) {
+    res
+        .status(500)
+        .json({success: false, message: e.message});
+  }
+}

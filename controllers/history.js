@@ -3,7 +3,6 @@ exports.addHistory = async (req, res) => {
     const {name, date} = req.body;
     try {
         const newHistory = new History({name, date,type});
-        console.log(newHistory)
         await newHistory.save();
         return res.status(201).send({success: true, message: 'History created successfully!'});
     }catch (e) {

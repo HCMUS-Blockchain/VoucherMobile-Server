@@ -19,6 +19,9 @@ const historySchema = new mongoose.Schema({
     },
     game:{
         type:String
+    },
+    message:{
+        type:String
     }
 })
 module.exports = mongoose.model('History', historySchema);
