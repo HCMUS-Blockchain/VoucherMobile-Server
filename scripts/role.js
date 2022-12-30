@@ -1,5 +1,7 @@
 const ROLE = {
-    ADMIN: 'admin',
-    USER: 'user',
-    COUNTERPART: 'counterpart',
+    ADMIN: 'Admin',
+    USER: 'User',
+    COUNTERPART: 'Counterpart',
 }
+
+module.exports = ROLE;

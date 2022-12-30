@@ -41,21 +41,15 @@ B
 models/category.js,b\d\bda8270578bc3675aa555119ca87dd9ace8dbc46
 A
 scripts/deploy.js,f\2\f2bc22b6778542248840c9fa89b6d11cf9f87aff
-B
-scripts/getData.js,9\a\9a93693b6443f525185070d5c0d434559e2534ae
 J
 contracts/RandomNumber.sol,2\1\2185fcbc57db800214a44d2dd99c361f749a2680
 F
 scripts/signMessage.js,d\9\d95f0127ef32cac2b682287b1874c44e0a56aa7d
 ?
-scripts/test.js,9\7\9757ce33b7b0f6d60cf804e809409e7d704586a5
-?
 views/index.pug,e\4\e465e003ac3202407b8d16efb96736719f4cb6ad
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-J
-scripts/getRandomNumber.js,f\b\fba5d66c1e556256fb741260c7234cde5b168fa3
 N
 middlewares/validation/user.js,2\3\235aa55bcde62895279f71c81747139295cb369c
 <
@@ -88,7 +82,5 @@ A
 routes/history.js,6\e\6e14dc0d5d0d7a5b2968d8ec016accd73535b9aa
 F
 controllers/history.js,b\9\b940f59195c129f3e74a8083dccccc356d1950f3
-?
-routes/index.js,3\0\30dfc417d69af8ed298ed4111dcab68f38ca7f54
 F
 controllers/voucher.js,c\d\cd1ca5404e7964131a631e3d8407583ae6867959
