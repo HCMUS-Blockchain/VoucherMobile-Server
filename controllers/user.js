@@ -98,3 +98,25 @@ exports.getProfileUser = async (req, res) => {
     });
   }
 };
+exports.checkUserExistByEmail = async (req,res) =>{
+  console.log(req.body)
+  const userEmail = req.body.email
+  try{
+    if(userEmail){
+      const user= await User.findOne({email:userEmail})
+      if (user){
+        res
+            .status(201)
+            .json({success: true, message: user});
+      }else res
+          .status(500)
+          .json({success: false, message: 'can not find user id'});
+    }else res
+        .status(500)
+        .json({success: false, message: 'can not find user id'});
+  }catch (e) {
+    res
+        .status(500)
+        .json({success: false, message: e.message});
+  }
+}

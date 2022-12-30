@@ -1,5 +1,5 @@
 const Puzzle = require('../models/puzzle');
-
+const User = require('../models/user')
 exports.addPuzzle = async (req, res) => {
     try {
 
@@ -49,6 +49,8 @@ exports.sendPuzzleFriend = async (req, res) => {
             const piece = puzzle.piece
             const userReceiveId = puzzle.userId
             const userSendId = req.user._id
+            const userSendFinding = await User.findById(userSendId)
+            if (!userSendFinding) return res.status(400).send({success: false, message: "User do not exist"});
             const puzzleOfSendUser = await Puzzle.findOne({user: userSendId});
             const puzzleOfPiece = puzzleOfSendUser[piece]
             if (puzzleOfPiece.quantity > 0 && puzzleOfPiece.id.find((id) => id === puzzleId)) {
@@ -61,6 +63,11 @@ exports.sendPuzzleFriend = async (req, res) => {
                 if (puzzleOfReceiveUser) {
                     puzzleOfReceiveUser[piece].quantity = puzzleOfReceiveUser[piece].quantity + 1;
                     puzzleOfReceiveUser[piece].id.push(puzzleId)
+                    puzzleOfReceiveUser.lastPieceReceived = {
+                        piece,
+                        img: puzzleOfReceiveUser[piece].img,
+                        name:userSendFinding.fullName
+                    }
                     const result = await Puzzle.findByIdAndUpdate(puzzleOfReceiveUser._id, puzzleOfReceiveUser,
                         {
                             new: true,
@@ -84,11 +91,17 @@ exports.sendPuzzleFriend = async (req, res) => {
                         piece_7: puzzleMapDb.piece_7,
                         piece_8: puzzleMapDb.piece_8,
                         piece_9: puzzleMapDb.piece_9,
-                        name: puzzleMapDb.name
+                        name: puzzleMapDb.name,
+                        lastPieceReceived: puzzleMapDb.lastPieceReceived
                     }
                     const puzzleAdding = await Puzzle.create(newPuzzle);
                     puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
                     puzzleAdding[piece].id.push(puzzleId)
+                    puzzleAdding.lastPieceReceived = {
+                        piece,
+                        img: puzzleAdding[piece].img,
+                        name:userSendFinding.fullName
+                    }
                     const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id, puzzleAdding,
                         {
                             new: true,
@@ -137,6 +150,10 @@ exports.sendPuzzleEveryone = async (req, res) => {
                 if (puzzleOfReceiveUser) {
                     puzzleOfReceiveUser[piece].quantity = puzzleOfReceiveUser[piece].quantity + 1;
                     puzzleOfReceiveUser[piece].id.push(puzzleId)
+                    puzzleOfReceiveUser.lastPieceReceived = {
+                        piece,
+                        img: puzzleOfReceiveUser[piece].img
+                    }
                     const result = await Puzzle.findByIdAndUpdate(puzzleOfReceiveUser._id, puzzleOfReceiveUser,
                         {
                             new: true,
@@ -160,11 +177,16 @@ exports.sendPuzzleEveryone = async (req, res) => {
                         piece_7: puzzleMapDb.piece_7,
                         piece_8: puzzleMapDb.piece_8,
                         piece_9: puzzleMapDb.piece_9,
-                        name: puzzleMapDb.name
+                        name: puzzleMapDb.name,
+                        lastPieceReceived: puzzleMapDb.lastPieceReceived
                     }
                     const puzzleAdding = await Puzzle.create(newPuzzle);
                     puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
                     puzzleAdding[piece].id.push(puzzleId)
+                    puzzleAdding.lastPieceReceived = {
+                        piece,
+                        img: puzzleAdding[piece].img
+                    }
                     const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id, puzzleAdding,
                         {
                             new: true,

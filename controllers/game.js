@@ -98,3 +98,21 @@ exports.getAllQuiz = async (req, res) => {
     res.status(400).send({ success: false, message: e.message });
   }
 };
+
+exports.findPointAndDiscount= (point,game) => {
+  let pointRs=0, discountRs=0
+  for (let i = 0; i < game.length; i++) {
+    if (point < game[i].point) {
+      if (i-1 >= 0) {
+        pointRs = game[i-1].point
+        discountRs = game[i-1].discount
+      }
+      else {
+        pointRs = game[i].point
+        discountRs = 0
+      }
+      break
+    }
+  }
+  return {pointRs, discountRs}
+}

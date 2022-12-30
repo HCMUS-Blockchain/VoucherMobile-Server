@@ -72,3 +72,14 @@ exports.isCounterpartAndUser = async (req, res, next) => {
     res.status(401).send({ success: false, message: "Internal server error" });
   }
 };
+
+exports.authRole = (role) => {
+    return (req, res, next) => {
+        if (req.user.role !== role) {
+        return res
+            .status(401)
+            .send({ success: false, message: "Unauthorized" });
+        }
+        next();
+    };
+}

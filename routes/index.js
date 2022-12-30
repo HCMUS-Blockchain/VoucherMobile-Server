@@ -5,7 +5,7 @@ const {
   userSignIn,
   signOut,
   uploadAvatar,
-  getProfileUser,
+  getProfileUser, checkUserExistByEmail,
 } = require("../controllers/user");
 const {
   validateUserSignUp,
@@ -38,4 +38,5 @@ router.post("/upload-profile", isAuth, uploads.single("profile"), uploadAvatar);
 router.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
+router.post('/check-user-exist',isAuth,checkUserExistByEmail)
 module.exports = router;
