@@ -34,3 +34,14 @@ exports.isAuth = async (req, res, next) => {
     return res.status(401).send({ success: false, message: "Unauthorized" });
   }
 };
+
+exports.authRole = (role) => {
+    return (req, res, next) => {
+        if (req.user.role !== role) {
+        return res
+            .status(401)
+            .send({ success: false, message: "Unauthorized" });
+        }
+        next();
+    };
+}

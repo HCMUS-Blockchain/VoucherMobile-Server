@@ -60,8 +60,6 @@ N
 middlewares/validation/user.js,2\3\235aa55bcde62895279f71c81747139295cb369c
 <
 models/db.js,7\5\7524c339d74e3fad31731ed3d74a05a9611c8199
-C
-middlewares/auth.js,6\e\6ef1f1734a4970e0bcd86633dd049a66965633e3
 G
 controllers/campaign.js,8\f\8fd541485f957e1eb3450087cbde369070df033c
 B
@@ -84,9 +82,13 @@ C
 controllers/game.js,e\f\ef0697849438ef887902e79e552879ea92ccdd30
 >
 models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
->
-routes/game.js,f\d\fd3c3c0a889cfce13048ef54e1478eba29562bdc
 @
 routes/random.js,1\c\1cd063daea4e93229e0e613b9b8344e867b9e7b9
 A
 routes/history.js,6\e\6e14dc0d5d0d7a5b2968d8ec016accd73535b9aa
+F
+controllers/history.js,b\9\b940f59195c129f3e74a8083dccccc356d1950f3
+?
+routes/index.js,3\0\30dfc417d69af8ed298ed4111dcab68f38ca7f54
+F
+controllers/voucher.js,c\d\cd1ca5404e7964131a631e3d8407583ae6867959
