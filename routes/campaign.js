@@ -8,13 +8,14 @@ const {
   deleteMultipleCampaign,
   deleteSingleCampaign,
 } = require("../controllers/campaign");
+const { isAuth, isCounterpart } = require("../middlewares/auth");
 const router = express.Router();
 
-router.get("/", getAllCampaigns);
-router.post("/", createCampaign);
-router.get("/:id", getOneCampaign);
-router.put("/", updateCampaign);
-router.delete("/", deleteMultipleCampaign);
-router.delete("/:id", deleteSingleCampaign);
+router.get("/", isAuth, isCounterpart, getAllCampaigns);
+router.post("/", isAuth, isCounterpart, createCampaign);
+router.get("/:id", isAuth, isCounterpart, getOneCampaign);
+router.put("/", isAuth, isCounterpart, updateCampaign);
+router.delete("/", isAuth, isCounterpart, deleteMultipleCampaign);
+router.delete("/:id", isAuth, isCounterpart, deleteSingleCampaign);
 
 module.exports = router;

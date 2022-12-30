@@ -15,7 +15,7 @@ exports.isAuth = async (req, res, next) => {
           .status(401)
           .send({ success: false, message: "User not found" });
       req.user = user;
-      return next();
+      next();
     } catch (e) {
       if (e.name === "TokenExpiredError") {
         return res
@@ -31,7 +31,45 @@ exports.isAuth = async (req, res, next) => {
         .send({ success: false, message: "Internal server error" });
     }
   } else {
-    return res.status(401).send({ success: false, message: "Unauthorized" });
+    return res
+      .status(401)
+      .send({ success: false, message: "Unauthorized 123" });
+  }
+};
+
+exports.isCounterpart = async (req, res, next) => {
+  const role = req.user.role;
+  if (role === "Counterpart") {
+    next();
+  } else {
+    res.status(401).send({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.isUser = async (req, res, next) => {
+  const role = req.data.role;
+  if (role === "User") {
+    next();
+  } else {
+    res.status(401).send({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.isAdmin = async (req, res, next) => {
+  const role = req.data.role;
+  if (role === "Admin") {
+    next();
+  } else {
+    res.status(401).send({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.isCounterpartAndUser = async (req, res, next) => {
+  const role = req.data.role;
+  if (role === "Counterpart" || role === "User") {
+    next();
+  } else {
+    res.status(401).send({ success: false, message: "Internal server error" });
   }
 };
 

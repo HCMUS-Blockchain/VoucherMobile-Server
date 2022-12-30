@@ -1,20 +1,25 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const counterpartSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    phone: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-    },
-    headquarter: {
-        type: String,
-    }
-})
-module.exports = mongoose.model('Counterpart', counterpartSchema);
+  image: {
+    type: String,
+    required: true,
+  },
+  nameOfShop: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  headquarter: {
+    type: String,
+  },
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+});
+module.exports = mongoose.model("Counterpart", counterpartSchema);

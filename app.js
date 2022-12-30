@@ -26,13 +26,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 const base = "/api";
+
 app.use(base + "/", indexRouter);
 app.use(base + "/vouchers", vouchersRouter);
 app.use(base + "/random", randomRouter);
 app.use(base + "/campaigns", compaignRouter);
 app.use(base + "/games", gameRouter);
 app.use(base + "/category", categoryRouter);
-app.use(base + "/counterpart", counterpartRouter);
+app.use(base + "/counterparts", counterpartRouter);
 app.use(base + "/puzzle", puzzleRouter);
 
 // catch 404 and forward to error handler

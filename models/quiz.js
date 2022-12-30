@@ -33,5 +33,10 @@ const quizSchema = new mongoose.Schema({
     required: true,
   },
   questions: [questionAndAnswerSchema],
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 module.exports = mongoose.model("Quiz", quizSchema);

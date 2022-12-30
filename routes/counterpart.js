@@ -1,7 +1,14 @@
-const express = require('express');
-const {isAuth} = require("../middlewares/auth");
-const {createCounterpart} = require("../controllers/counterpart");
+const express = require("express");
+const { isAuth } = require("../middlewares/auth");
+const {
+  createCounterpart,
+  getCounterpart,
+  updateCounterpart,
+} = require("../controllers/counterpart");
 const router = express.Router();
 
-router.post('/add', isAuth, createCounterpart)
+router.get("/", isAuth, getCounterpart);
+router.post("/", isAuth, createCounterpart);
+router.put("/", isAuth, updateCounterpart);
+
 module.exports = router;

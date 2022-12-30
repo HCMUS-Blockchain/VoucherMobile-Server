@@ -23,5 +23,10 @@ const gameSchema = new mongoose.Schema({
     ref: "Campaign",
     required: true,
   },
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 module.exports = mongoose.model("Game", gameSchema);
