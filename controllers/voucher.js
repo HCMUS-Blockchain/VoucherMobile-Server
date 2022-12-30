@@ -96,10 +96,11 @@ exports.playGame = async (req, res) => {
         const userId = req.user._id
         const user = await User.findById(userId);
         if (user) {
-            const game = await Game.findOne({id: campaignId})
-            const gameAverage= game.pointAverage
-            console.log(gameAverage.length)
-            let {pointRs, discountRs} = findPointAndDiscount(points, gameFinding)
+            const gameFinding = await Game.findOne({id: campaignId})
+            console.log(gameFinding)
+            const gamePoint = gameFinding.pointAverage
+            const game = gamePoint[gameType]
+            let {pointRs, discountRs} = findPointAndDiscount(points, game)
             const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
             if (countVoucher.length > 0) {
                 const voucher_ = countVoucher[0];
@@ -136,6 +137,7 @@ exports.playGame = async (req, res) => {
 //getPuzzle
 exports.playPuzzle = async (req, res) => {
     try {
+        console.log(req.body)
         const {name} = req.body;
         const userId = req.user._id
         const puzzleMapDb = await Puzzle.findOne({name})
