@@ -35,12 +35,6 @@ exports.signOut = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Authorization fail!" });
     }
-
-    const tokens = req.user.tokens;
-
-    const newTokens = tokens.filter((t) => t.token !== token);
-
-    await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
     res.json({ success: true, message: "Sign out successfully!" });
   }
 };
@@ -88,7 +82,7 @@ exports.getProfileUser = async (req, res) => {
       _id: user._id,
       email: user.email,
       fullName: user.fullName,
-      // avatar: user.avatar,
+      avatar: user.avatar,
     });
   } catch (error) {
     console.log("failed to parse token", error);

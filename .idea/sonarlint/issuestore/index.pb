@@ -66,8 +66,6 @@ B
 routes/campaign.js,0\8\08da4a5d36f55ee150720bf86d2040c794ffffc1
 >
 models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
-6
-app.js,4\a\4a68969ef8e858229267b842dedf42ab5dde4d50
 7
 bin/www,f\9\f9f3ad31c1666c9d010b84cbbe24e70370a40411
 A
@@ -78,9 +76,5 @@ C
 models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
 @
 routes/random.js,1\c\1cd063daea4e93229e0e613b9b8344e867b9e7b9
-A
-routes/history.js,6\e\6e14dc0d5d0d7a5b2968d8ec016accd73535b9aa
-F
-controllers/history.js,b\9\b940f59195c129f3e74a8083dccccc356d1950f3
 F
 controllers/voucher.js,c\d\cd1ca5404e7964131a631e3d8407583ae6867959

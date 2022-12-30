@@ -13,9 +13,10 @@ exports.addHistory = async (req, res) => {
 exports.getAll = async (req, res) => {
     try {
         const userId = req.user._id
+        console.log(userId)
         const histories = await History.find({
             userId
-        });
+        }).sort({date: -1});
         return res.status(200).send({success: true, message: 'Get all histories successfully', histories});
     } catch (e) {
         return res.status(400).send({success: false, message: e.message});
