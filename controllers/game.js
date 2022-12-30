@@ -5,7 +5,8 @@ exports.createGame = async (req, res) => {
     let body = {};
     body.pointAverage = JSON.parse(req.body.pointAverage);
     body.name = req.body.id;
-    body.id = req.body.id;
+    body.campaignID = req.body.id;
+    body.userID = req.user._id;
     const game = new Game(body);
     await game.save();
     res
@@ -18,7 +19,9 @@ exports.createGame = async (req, res) => {
 
 exports.getOnceGame = async (req, res) => {
   try {
-    const game = await Game.find({ id: req.params.id });
+    const game = await Game.find({
+      $and: [{ campaignID: req.params.id }, { userID: req.user._id }],
+    });
     res.status(200).send({
       success: true,
       message: "Get a game successfully",
@@ -32,7 +35,9 @@ exports.getOnceGame = async (req, res) => {
 exports.updateGame = async (req, res) => {
   try {
     await Game.updateOne(
-      { id: req.body.id },
+      {
+        $and: [{ campaignID: req.body.id }, { userID: req.user._id }],
+      },
       { $set: { pointAverage: JSON.parse(req.body.pointAverage) } }
     );
     res.status(200).send({
@@ -44,10 +49,11 @@ exports.updateGame = async (req, res) => {
   }
 };
 
-// --------------------------------------------
+// --------------------------------------------QUIZ-------------------------------
 exports.createQuiz = async (req, res) => {
   try {
     req.body.questions = JSON.parse(req.body.questions);
+    req.body.userID = req.user._id;
     const quiz = new Quiz(req.body);
 
     await quiz.save();
@@ -63,7 +69,12 @@ exports.createQuiz = async (req, res) => {
 exports.updateQuiz = async (req, res) => {
   try {
     req.body.questions = JSON.parse(req.body.questions);
-    await Quiz.updateOne({ _id: req.body._id }, req.body);
+    await Quiz.updateOne(
+      {
+        $and: [{ _id: req.body._id }, { userID: req.user._id }],
+      },
+      req.body
+    );
     res
       .status(201)
       .send({ success: true, message: "Quiz updated successfully" });
@@ -75,7 +86,9 @@ exports.updateQuiz = async (req, res) => {
 
 exports.getOnceQuiz = async (req, res) => {
   try {
-    const quiz = await Quiz.find({ _id: req.params.id });
+    const quiz = await Quiz.find({
+      $and: [{ _id: req.params.id }, { userID: req.user._id }],
+    });
     res.status(200).send({
       success: true,
       message: "Get a quiz successfully",
@@ -88,7 +101,7 @@ exports.getOnceQuiz = async (req, res) => {
 
 exports.getAllQuiz = async (req, res) => {
   try {
-    const quizzes = await Quiz.find();
+    const quizzes = await Quiz.find({ userID: req.user._id });
     res.status(200).send({
       success: true,
       message: "Get all quizzes successfully",
