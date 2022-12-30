@@ -82,7 +82,7 @@ exports.getProfileUser = async (req, res) => {
       _id: user._id,
       email: user.email,
       fullName: user.fullName,
-      // avatar: user.avatar,
+      avatar: user.avatar,
     });
   } catch (error) {
     console.log("failed to parse token", error);

@@ -14,6 +14,7 @@ const gameRouter = require("./routes/game");
 const categoryRouter = require("./routes/category");
 const counterpartRouter = require("./routes/counterpart");
 const puzzleRouter = require("./routes/puzzle");
+const historyRouter = require("./routes/history");
 const app = express();
 
 // view engine setup
@@ -35,7 +36,7 @@ app.use(base + "/games", gameRouter);
 app.use(base + "/category", categoryRouter);
 app.use(base + "/counterparts", counterpartRouter);
 app.use(base + "/puzzle", puzzleRouter);
-
+app.use(base + "/history", historyRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
