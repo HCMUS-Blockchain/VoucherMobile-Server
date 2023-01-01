@@ -41,3 +41,33 @@ exports.updateEmployee = async (req, res) => {
     res.status(400).send({ success: false, message: e.message });
   }
 };
+
+exports.deleteEmployee = async (req, res) => {
+  console.log(req.params.id);
+  try {
+    await Employee.find({
+      $and: [{ userID: req.user._id }, { _id: req.params.id }],
+    }).deleteOne();
+    res.status(200).send({
+      success: true,
+      message: "Delete a employee successfully",
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.deleteMultipleEmployees = async (req, res) => {
+  try {
+    const listID = Object.values(req.query);
+    await Employee.find({
+      $and: [{ _id: { $in: listID } }, { userID: req.user._id }],
+    }).deleteMany();
+    res.status(200).send({
+      success: true,
+      message: "Delete a employee's list successfully",
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
