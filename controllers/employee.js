@@ -2,12 +2,28 @@ const Employee = require("../models/employee");
 
 exports.createEmployee = async (req, res) => {
   try {
-    req.body.ownerID = req.user._id;
-    const employee = new Employee(req.body);
-    await employee.save();
-    res
-      .status(201)
-      .send({ success: true, message: "Employee created successfully" });
+    if (req.body.length > 1) {
+      req.body = req.body
+        .filter((item) => item.employeeID !== "")
+        .map((item) => {
+          const ownerID = req.user._id;
+          const result = { ...item, ownerID };
+          return result;
+        });
+      console.log(req.body);
+      await Employee.insertMany(req.body);
+      res
+        .status(201)
+        .send({ success: true, message: "Employee list created successfully" });
+    } else {
+      console.log("AAA");
+      req.body.ownerID = req.user._id;
+      const employee = new Employee(req.body);
+      await employee.save();
+      res
+        .status(201)
+        .send({ success: true, message: "Employee created successfully" });
+    }
   } catch (e) {
     res.status(400).send({ success: false, message: e.message });
   }
@@ -43,7 +59,6 @@ exports.updateEmployee = async (req, res) => {
 };
 
 exports.deleteEmployee = async (req, res) => {
-  console.log(req.params.id);
   try {
     await Employee.find({
       $and: [{ userID: req.user._id }, { _id: req.params.id }],
@@ -65,7 +80,28 @@ exports.deleteMultipleEmployees = async (req, res) => {
     }).deleteMany();
     res.status(200).send({
       success: true,
-      message: "Delete a employee's list successfully",
+      message: "Delete an employee's list successfully",
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.changeAllEmployee = async (req, res) => {
+  try {
+    await Employee.deleteMany({ ownerID: req.user._id });
+    req.body = req.body
+      .filter((item) => item.employeeID !== "")
+      .map((item) => {
+        const ownerID = req.user._id;
+        const result = { ...item, ownerID };
+        return result;
+      });
+
+    await Employee.insertMany(req.body);
+    res.status(200).send({
+      success: true,
+      message: "Change an employee's list successfully",
     });
   } catch (e) {
     res.status(400).send({ success: false, message: e.message });
