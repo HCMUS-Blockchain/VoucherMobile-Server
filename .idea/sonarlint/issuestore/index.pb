@@ -68,8 +68,6 @@ C
 controllers/game.js,e\f\ef0697849438ef887902e79e552879ea92ccdd30
 >
 models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
-A
-models/history.js,6\9\699351d9b265addd025837430f85c925f59fd91d
 >
 routes/game.js,f\d\fd3c3c0a889cfce13048ef54e1478eba29562bdc
 C

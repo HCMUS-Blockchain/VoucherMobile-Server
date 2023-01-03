@@ -127,6 +127,7 @@ exports.playGame = async (req, res) => {
                             useFindAndModify: false
                         })
                     }
+
                     res.status(201).send({
                         success: true, message: 'Voucher added successfully',
                         voucher

@@ -10,7 +10,7 @@ router.post('/add', isAuth, addPuzzle);
 router.post('/', isAuth, getAll)
 router.post('/send-friend', isAuth, sendPuzzleFriend)
 router.post('/send-everyone', isAuth, sendPuzzleEveryone)
-router.post('/play', isAuth,authRole(ROLE.COUNTERPART),playPuzzle);
+router.post('/play', isAuth,playPuzzle);
 
 
 module.exports = router;
