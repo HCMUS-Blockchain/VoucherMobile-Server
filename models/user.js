@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  vouchers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Voucher" }],
+  // vouchers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Voucher" }],
 });
 userSchema.pre("save", async function (next) {
   const user = this;

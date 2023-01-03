@@ -5,6 +5,7 @@ const Category = require('../models/category');
 const Game = require("../models/game");
 const {findPointAndDiscount} = require("./game");
 const Puzzle = require('../models/puzzle');
+const Campaign = require('../models/campaign');
 exports.createVoucher = async (req, res) => {
     try {
         const voucher = new Voucher(req.body);
@@ -27,9 +28,9 @@ exports.addVoucher = async (req, res) => {
 
 exports.getAllVouchersById = async (req, res) => {
     try {
-        const userId = req.user._id
-        const user = await User.findById(userId).populate('vouchers');
-        const vouchers = user.vouchers;
+        console.log(req)
+        const user = req.user._id
+        const vouchers = await Voucher.find({user})
         res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
     } catch (e) {
         res.status(400).send({success: false, message: e.message});
@@ -38,20 +39,15 @@ exports.getAllVouchersById = async (req, res) => {
 
 exports.getAllVouchersByCategoryName = async (req, res) => {
     try {
-        const userId = req.user._id
+        const user = req.user._id
         const category = req.body.category;
-        const user = await User.findById(userId).populate('vouchers')
         if (category === 'All') {
-            const vouchers = user.vouchers;
+            const vouchers = await Voucher.find({user});
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
-            const vouchers = []
-            for (let i = 0; i < user.vouchers.length; i++) {
-                const categoryFinding = await Category.findById(user.vouchers[i].category);
-                if (categoryFinding.name === category) {
-                    vouchers.push(user.vouchers[i])
-                }
-            }
+            const catFinding = await Category.findOne({name: category})
+            if (!catFinding) res.status(400).send({success: false, message: 'No category'});
+            const vouchers = await Voucher.find({user, category: catFinding._id});
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         }
     } catch (e) {
@@ -74,13 +70,14 @@ exports.getAllVouchersAndCategory = async (req, res) => {
 exports.searchVouchersByDescriptionAndShop = async (req, res) => {
     try {
         const {keyword} = req.body;
+        const user = req.user._id
         if (keyword === '') {
-            const vouchers = await Voucher.find();
+            const vouchers = await Voucher.find({user});
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
-            const vouchersFind = await Voucher.find().populate('campaign');
+            const vouchersFind = await Voucher.find({user});
             const vouchers = vouchersFind.filter(voucher => {
-                return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.shop.toLowerCase().includes(keyword.toLowerCase());
+                return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.toLowerCase().includes(keyword.toLowerCase());
             })
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         }
@@ -88,7 +85,11 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
         res.status(400).send({success: false, message: e.message});
     }
 }
-
+//function supplement to get voucher
+const checkKeywordExistInCampaign = async (campaignId) => {
+    const userId = await Campaign.findById(campaignId).select('userId');
+    console.log(userId)
+}
 //getVoucher
 exports.playGame = async (req, res) => {
     try {
@@ -96,26 +97,36 @@ exports.playGame = async (req, res) => {
         const userId = req.user._id
         const user = await User.findById(userId);
         if (user) {
-            const gameFinding = await Game.findOne({id: campaignId})
-            console.log(gameFinding)
+            const gameFinding = await Game.findOne({campaignId})
             const gamePoint = gameFinding.pointAverage
             const game = gamePoint[gameType]
             let {pointRs, discountRs} = findPointAndDiscount(points, game)
+            console.log(discountRs)
             const countVoucher = await getCampaignInThisCampaignAndDiscount(campaignId, discountRs);
             if (countVoucher.length > 0) {
                 const voucher_ = countVoucher[0];
-                await setVoucherInformation(voucher_._id, gameType, new Date());
+                await setVoucherInformation(voucher_._id, gameType, user._id, new Date());
                 await User.findByIdAndUpdate(userId, {
                     $push: {vouchers: voucher_._id},
                     new: true,
                     useFindAndModify: false
                 });
                 getRandomNumberBaseOnUniswap().then(async (x) => {
-                    console.log(x);
                     const voucher = await Voucher.findByIdAndUpdate(voucher_._id, {code: x}, {
                         new: true,
                         useFindAndModify: false
                     });
+                    console.log(statisticsOfCampagin(campaignId,userId))
+                    if (await statisticsOfCampagin(campaignId, userId)){
+                        const campaign = await Campaign.findById(campaignId)
+                        console.log(campaign)
+                        const userArray = campaign.userJoin
+                        userArray.push(userId)
+                        await Campaign.findByIdAndUpdate(campaignId, {userJoin: userArray}, {
+                            new: true,
+                            useFindAndModify: false
+                        })
+                    }
                     res.status(201).send({
                         success: true, message: 'Voucher added successfully',
                         voucher
@@ -132,6 +143,16 @@ exports.playGame = async (req, res) => {
     } catch (e) {
         res.status(400).send({success: false, message: e.message});
     }
+}
+
+const statisticsOfCampagin =async (camPaign, userId) => {
+    const campaign = await Campaign.findById(camPaign)
+    const userArray = campaign.userJoin
+    console.log(campaign)
+    if (userArray.length > 0 && userArray.includes(userId)) {
+        return false
+    }
+    return true
 }
 
 //getPuzzle
@@ -151,12 +172,12 @@ exports.playPuzzle = async (req, res) => {
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleGetByUserId);
                         puzzleGetByUserId[piece].quantity = puzzleGetByUserId[piece].quantity + 1;
                         puzzleGetByUserId[piece].id.push(x)
-                        const imgPiece= puzzleGetByUserId[piece].img;
+                        const imgPiece = puzzleGetByUserId[piece].img;
                         puzzleGetByUserId.lastPieceReceived = {
                             piece,
-                            img:imgPiece
+                            img: imgPiece
                         }
-                        const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id,puzzleGetByUserId,
+                        const result = await Puzzle.findByIdAndUpdate(puzzleGetByUserId._id, puzzleGetByUserId,
                             {
                                 new: true,
                                 useFindAndModify: false
@@ -174,15 +195,15 @@ exports.playPuzzle = async (req, res) => {
                         console.log(puzzleMapDb)
                         const newPuzzle = {
                             user: userId,
-                            piece_1:puzzleMapDb.piece_1,
-                            piece_2:puzzleMapDb.piece_2,
-                            piece_3:puzzleMapDb.piece_3,
-                            piece_4:puzzleMapDb.piece_4,
-                            piece_5:puzzleMapDb.piece_5,
-                            piece_6:puzzleMapDb.piece_6,
-                            piece_7:puzzleMapDb.piece_7,
-                            piece_8:puzzleMapDb.piece_8,
-                            piece_9:puzzleMapDb.piece_9,
+                            piece_1: puzzleMapDb.piece_1,
+                            piece_2: puzzleMapDb.piece_2,
+                            piece_3: puzzleMapDb.piece_3,
+                            piece_4: puzzleMapDb.piece_4,
+                            piece_5: puzzleMapDb.piece_5,
+                            piece_6: puzzleMapDb.piece_6,
+                            piece_7: puzzleMapDb.piece_7,
+                            piece_8: puzzleMapDb.piece_8,
+                            piece_9: puzzleMapDb.piece_9,
                             name: puzzleMapDb.name,
                             lastPieceReceived: puzzleMapDb.lastPieceReceived
                         }
@@ -190,12 +211,12 @@ exports.playPuzzle = async (req, res) => {
                         const piece = checkRarityAndReturnPuzzle(convertInRange, puzzleAdding);
                         puzzleAdding[piece].quantity = puzzleAdding[piece].quantity + 1;
                         puzzleAdding[piece].id.push(x)
-                        const imgPiece= puzzleAdding[piece].img;
+                        const imgPiece = puzzleAdding[piece].img;
                         puzzleAdding.lastPieceReceived = {
                             piece,
-                            img:imgPiece
+                            img: imgPiece
                         }
-                        const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id,puzzleAdding,
+                        const result = await Puzzle.findByIdAndUpdate(puzzleAdding._id, puzzleAdding,
                             {
                                 new: true,
                                 useFindAndModify: false
@@ -239,9 +260,9 @@ const checkRarityAndReturnPuzzle = (rarity, object) => {
     }
 }
 
-const setVoucherInformation = async (voucherId, game, timeGet) => {
+const setVoucherInformation = async (voucherId, game, user, timeGet) => {
     try {
-        await Voucher.findByIdAndUpdate(voucherId, {available: false, game, timeGet}, {
+        await Voucher.findByIdAndUpdate(voucherId, {available: false, game, user, timeGet}, {
             new: true,
             useFindAndModify: false
         });

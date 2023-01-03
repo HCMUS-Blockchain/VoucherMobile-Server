@@ -30,6 +30,9 @@ const campaignSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  userJoin: {
+    type: Array,
+  }
   // shop:{
   //     type: String,
   // },
