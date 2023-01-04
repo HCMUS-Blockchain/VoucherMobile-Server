@@ -116,20 +116,17 @@ exports.playGame = async (req, res) => {
                         new: true,
                         useFindAndModify: false
                     });
-                    if (await statisticsOfCampagin(campaignId, userId)){
-                        const campaign = await Campaign.findById(campaignId)
-                        console.log(campaign)
-                        const userArray = campaign.userJoin
-                        userArray.push({
-                            id: userId,
-                            createdDate: new Date()
-                        })
-                        await Campaign.findByIdAndUpdate(campaignId, {userJoin: userArray}, {
-                            new: true,
-                            useFindAndModify: false
-                        })
-                    }
-
+                    const campaign = await Campaign.findById(campaignId)
+                    console.log(campaign)
+                    const userArray = campaign.userJoin
+                    userArray.push({
+                        id: userId,
+                        createdAt: new Date()
+                    })
+                    await Campaign.findByIdAndUpdate(campaignId, {userJoin: userArray}, {
+                        new: true,
+                        useFindAndModify: false
+                    })
                     res.status(201).send({
                         success: true, message: 'Voucher added successfully',
                         voucher
@@ -148,7 +145,7 @@ exports.playGame = async (req, res) => {
     }
 }
 
-const statisticsOfCampagin =async (camPaign, userId) => {
+const statisticsOfCampagin = async (camPaign, userId) => {
     const campaign = await Campaign.findById(camPaign)
     const userArray = campaign.userJoin
     console.log(campaign)

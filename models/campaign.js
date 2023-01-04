@@ -1,4 +1,12 @@
 const mongoose = require("mongoose");
+
+const userJoinSchema = new mongoose.Schema(
+    {
+        id: mongoose.Schema.Types.ObjectId,
+        createdAt: Date,
+    },
+    { _id: false }
+);
 const campaignSchema = new mongoose.Schema({
         name: {
             type: String,
@@ -31,7 +39,7 @@ const campaignSchema = new mongoose.Schema({
             required: true,
         },
         userJoin: {
-            type: Array,
+            type: [userJoinSchema],
         },
 // shop:{
         //     type: String,
@@ -40,6 +48,6 @@ const campaignSchema = new mongoose.Schema({
         //     type: mongoose.Schema.Types.ObjectId,
         // }
     },
-    {timestamps: true}
+    {timestamps: true},
 );
 module.exports = mongoose.model("Campaign", campaignSchema);
