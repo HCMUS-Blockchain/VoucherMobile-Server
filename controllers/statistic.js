@@ -173,35 +173,55 @@ async function getTotalVoucher(option, userID, available) {
   return { value: currentVoucherList, percentage: result };
 }
 
+async function getCustomer(option, userID) {
+  const [firstDateBegin, firstDateEnd, secondDateBegin, secondDateEnd] =
+    getDate(option);
+  const currentListUser = await Campaign.find({
+    $and: [
+      { userID: userID },
+      { "userJoin.createdAt": { $gte: firstDateBegin, $lt: firstDateEnd } },
+    ],
+  }).count();
+
+  const pastListUser = await Campaign.find({
+    $and: [
+      { userID: userID },
+      { "userJoin.createdAt": { $gte: secondDateBegin, $lt: secondDateEnd } },
+    ],
+  }).select("userJoin");
+
+  console.log(currentListUser);
+  console.log(pastListUser);
+}
 exports.getGeneralStatistic = async (req, res) => {
   try {
-    const option = req.params.option;
-    console.log(option);
-    let campaignResult, customerResult, releaseResult, usedResult;
-    usedResult = await getTotalVoucher(option, req.user._id, false);
-    releaseResult = await getTotalVoucher(option, req.user._id, true);
-    campaignResult = await getTotalCampaign(option, req.user._id);
+    // const option = req.params.option;
+    // let campaignResult, customerResult, releaseResult, usedResult;
+    // usedResult = await getTotalVoucher(option, req.user._id, false);
+    // releaseResult = await getTotalVoucher(option, req.user._id, true);
+    // campaignResult = await getTotalCampaign(option, req.user._id);
 
-    for (const element of templateData) {
-      if (element.label === "Campaigns") {
-        element.value = campaignResult.value;
-        element.percentage = campaignResult.percentage;
-      } else if (element.label === "Customers") {
-        element.value = 12;
-        element.percentage = 2.3;
-      } else if (element.label === "Release Vouchers") {
-        element.value = releaseResult.value;
-        element.percentage = releaseResult.percentage;
-      } else if (element.label === "Used Vouchers") {
-        element.value = usedResult.value;
-        element.percentage = usedResult.percentage;
-      }
-    }
-    res.status(201).send({
-      result: templateData,
-      success: true,
-      message: "Voucher created successfully",
-    });
+    // for (const element of templateData) {
+    //   if (element.label === "Campaigns") {
+    //     element.value = campaignResult.value;
+    //     element.percentage = campaignResult.percentage;
+    //   } else if (element.label === "Customers") {
+    //     element.value = 12;
+    //     element.percentage = 2.3;
+    //   } else if (element.label === "Release Vouchers") {
+    //     element.value = releaseResult.value;
+    //     element.percentage = releaseResult.percentage;
+    //   } else if (element.label === "Used Vouchers") {
+    //     element.value = usedResult.value;
+    //     element.percentage = usedResult.percentage;
+    //   }
+    // }
+    // res.status(201).send({
+    //   result: templateData,
+    //   success: true,
+    //   message: "Voucher created successfully",
+    // });
+    await getCustomer("week", "63abe64eeaba23b3febbf56e");
   } catch (e) {
     res.status(400).send({ success: false, message: e.message });
   }
