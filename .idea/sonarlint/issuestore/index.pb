@@ -29,16 +29,12 @@ p
 @artifacts/@openzeppelin/contracts/utils/Strings.sol/Strings.json,d\a\dad9a6891f55d368c10a2c3c939a9231935fb07c
 A
 hardhat.config.js,4\2\429ab70247c64d2d87d4dac6787a6e4a9fb2ede2
-E
-models/counterpart.js,b\9\b9a7cc9f4f465cd2604a5bd1272346695f84d9b4
 J
 controllers/counterpart.js,6\2\62605f6db26e7278b067ae761a2852c9ac2fe4ce
 G
 controllers/category.js,0\3\03eb56641a6a39e75cf211d758c06cdf354f95e5
 D
 utils/imageUpload.js,1\0\1047871d5314fa3d8186c91582c236e86f8687de
-B
-models/category.js,b\d\bda8270578bc3675aa555119ca87dd9ace8dbc46
 A
 scripts/deploy.js,f\2\f2bc22b6778542248840c9fa89b6d11cf9f87aff
 J
@@ -54,20 +50,14 @@ N
 middlewares/validation/user.js,2\3\235aa55bcde62895279f71c81747139295cb369c
 <
 models/db.js,7\5\7524c339d74e3fad31731ed3d74a05a9611c8199
-G
-controllers/campaign.js,8\f\8fd541485f957e1eb3450087cbde369070df033c
 E
 routes/counterpart.js,1\8\18d247817077b6678732817b09600136a6cbf6de
 B
 routes/category.js,b\b\bbc8bb3f22e8d1fab810ceb5beac237aefab3ccd
->
-models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
 7
 bin/www,f\9\f9f3ad31c1666c9d010b84cbbe24e70370a40411
 C
 controllers/game.js,e\f\ef0697849438ef887902e79e552879ea92ccdd30
->
-models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
 >
 routes/game.js,f\d\fd3c3c0a889cfce13048ef54e1478eba29562bdc
 C
@@ -92,7 +82,5 @@ E
 controllers/puzzle.js,2\5\2594453865db7f388c89c1bb5574bf722caa51ea
 @
 routes/random.js,1\c\1cd063daea4e93229e0e613b9b8344e867b9e7b9
->
-models/user.js,5\8\58952233992370efa7ea98b3ec60c43d2d227d89
 6
 app.js,4\a\4a68969ef8e858229267b842dedf42ab5dde4d50
