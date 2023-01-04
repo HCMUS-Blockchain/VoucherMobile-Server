@@ -48,7 +48,10 @@ const voucherSchema = new mongoose.Schema({
         required: true,
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: {
+            id: mongoose.Schema.Types.ObjectId,
+            createdDate: Date,
+        }
     }
 });
 

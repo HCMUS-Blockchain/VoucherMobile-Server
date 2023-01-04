@@ -116,12 +116,14 @@ exports.playGame = async (req, res) => {
                         new: true,
                         useFindAndModify: false
                     });
-                    console.log(statisticsOfCampagin(campaignId,userId))
                     if (await statisticsOfCampagin(campaignId, userId)){
                         const campaign = await Campaign.findById(campaignId)
                         console.log(campaign)
                         const userArray = campaign.userJoin
-                        userArray.push(userId)
+                        userArray.push({
+                            id: userId,
+                            createdDate: new Date()
+                        })
                         await Campaign.findByIdAndUpdate(campaignId, {userJoin: userArray}, {
                             new: true,
                             useFindAndModify: false
