@@ -18,7 +18,7 @@ const gameSchema = new mongoose.Schema({
       collectionId: String,
     },
   },
-  id: {
+  campaignID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Campaign",
     required: true,

@@ -32,12 +32,14 @@ const campaignSchema = new mongoose.Schema({
   },
   userJoin: {
     type: Array,
-  }
-  // shop:{
+  },
+// shop:{
   //     type: String,
   // },
   // counterpart: {
   //     type: mongoose.Schema.Types.ObjectId,
   // }
-});
+},
+{ timestamps: true }
+);
 module.exports = mongoose.model("Campaign", campaignSchema);
