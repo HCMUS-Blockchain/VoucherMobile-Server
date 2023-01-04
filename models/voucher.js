@@ -46,6 +46,12 @@ const voucherSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true,
+    },
+    user: {
+        type: {
+            id: mongoose.Schema.Types.ObjectId,
+            createdDate: Date,
+        }
     }
 });
 
