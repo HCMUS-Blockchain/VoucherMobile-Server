@@ -1,10 +1,11 @@
 const dayjs = require("dayjs");
 const Campaign = require("../models/campaign");
+const Userjoin = require("../models/userjoin");
 const Voucher = require("../models/voucher");
 
 function getDate(option) {
   let firstDateBegin, firstDateEnd, secondDateBegin, secondDateEnd;
-  if (option === "thoday") {
+  if (option === "today") {
     firstDateBegin = dayjs().set("hour", 0).set("minute", 0).set("second", 0);
     firstDateEnd = dayjs().set("hour", 23).set("minute", 59).set("second", 59);
 
@@ -44,7 +45,7 @@ function getDate(option) {
       .set("second", 59);
   } else if (option == "month") {
     firstDateBegin = dayjs()
-      .set("date", 2)
+      .set("date", 1)
       .set("month", dayjs().get("month"))
       .set("hour", 0)
       .set("minute", 0)
@@ -57,7 +58,7 @@ function getDate(option) {
       .set("second", 59);
 
     secondDateBegin = dayjs()
-      .set("date", 2)
+      .set("date", 1)
       .set("month", dayjs().get("month") - 1)
       .set("hour", 0)
       .set("minute", 0)
@@ -70,7 +71,7 @@ function getDate(option) {
       .set("second", 59);
   } else if (option == "year") {
     firstDateBegin = dayjs()
-      .set("date", 2)
+      .set("date", 1)
       .set("month", 0)
       .set("hour", 0)
       .set("minute", 0)
@@ -83,7 +84,7 @@ function getDate(option) {
       .set("second", 59);
 
     secondDateBegin = dayjs()
-      .set("date", 2)
+      .set("date", 1)
       .set("month", 0)
       .set("year", dayjs().get("year") - 1)
       .set("hour", 0)
@@ -101,7 +102,8 @@ function getDate(option) {
 }
 
 function getResult(a, b) {
-  if (a === 0) return b * 100;
+  if (b === 0) return a * 100;
+  else if (a === 0) return b * -100;
   const temp = ((b - a) / a) * 100;
   if (Number.isInteger(temp)) {
     return temp;
@@ -127,6 +129,7 @@ const templateData = [
     description: "Total vouchers which users used ",
   },
 ];
+
 async function getTotalCampaign(option, userID) {
   const [firstDateBegin, firstDateEnd, secondDateBegin, secondDateEnd] =
     getDate(option);
@@ -176,53 +179,93 @@ async function getTotalVoucher(option, userID, available) {
 async function getCustomer(option, userID) {
   const [firstDateBegin, firstDateEnd, secondDateBegin, secondDateEnd] =
     getDate(option);
-  const currentListUser = await Campaign.find({
+  const listCampaignID = await Campaign.find({ userID: userID });
+  const currentListUser = await Userjoin.find({
     $and: [
-      { userID: userID },
-      { "userJoin.createdAt": { $gte: firstDateBegin, $lt: firstDateEnd } },
+      { campaignID: listCampaignID },
+      { createdAt: { $gte: firstDateBegin, $lt: firstDateEnd } },
     ],
   }).count();
 
-  const pastListUser = await Campaign.find({
+  const pastListUser = await Userjoin.find({
     $and: [
-      { userID: userID },
-      { "userJoin.createdAt": { $gte: secondDateBegin, $lt: secondDateEnd } },
+      { campaignID: listCampaignID },
+      { createdAt: { $gte: secondDateBegin, $lt: secondDateEnd } },
     ],
-  }).select("userJoin");
+  }).count();
 
-  console.log(currentListUser);
-  console.log(pastListUser);
+  const result = getResult(currentListUser, pastListUser);
+  return { value: currentListUser, percentage: result };
 }
 exports.getGeneralStatistic = async (req, res) => {
   try {
-    // const option = req.params.option;
-    // let campaignResult, customerResult, releaseResult, usedResult;
-    // usedResult = await getTotalVoucher(option, req.user._id, false);
-    // releaseResult = await getTotalVoucher(option, req.user._id, true);
-    // campaignResult = await getTotalCampaign(option, req.user._id);
+    const option = req.params.option;
+    let campaignResult, customerResult, releaseResult, usedResult;
+    usedResult = await getTotalVoucher(option, req.user._id, false);
+    releaseResult = await getTotalVoucher(option, req.user._id, true);
+    campaignResult = await getTotalCampaign(option, req.user._id);
+    customerResult = await getCustomer(option, req.user._id);
 
-    // for (const element of templateData) {
-    //   if (element.label === "Campaigns") {
-    //     element.value = campaignResult.value;
-    //     element.percentage = campaignResult.percentage;
-    //   } else if (element.label === "Customers") {
-    //     element.value = 12;
-    //     element.percentage = 2.3;
-    //   } else if (element.label === "Release Vouchers") {
-    //     element.value = releaseResult.value;
-    //     element.percentage = releaseResult.percentage;
-    //   } else if (element.label === "Used Vouchers") {
-    //     element.value = usedResult.value;
-    //     element.percentage = usedResult.percentage;
-    //   }
-    // }
-    // res.status(201).send({
-    //   result: templateData,
-    //   success: true,
-    //   message: "Voucher created successfully",
-    // });
-    await getCustomer("week", "63abe64eeaba23b3febbf56e");
+    for (const element of templateData) {
+      if (element.label === "Campaigns") {
+        element.value = campaignResult.value;
+        element.percentage = campaignResult.percentage;
+      } else if (element.label === "Customers") {
+        element.value = customerResult.value;
+        element.percentage = customerResult.percentage;
+      } else if (element.label === "Release Vouchers") {
+        element.value = releaseResult.value;
+        element.percentage = releaseResult.percentage;
+      } else if (element.label === "Used Vouchers") {
+        element.value = usedResult.value;
+        element.percentage = usedResult.percentage;
+      }
+    }
+    res.status(201).send({
+      result: templateData,
+      success: true,
+      message: "Voucher created successfully",
+    });
   } catch (e) {
+    console.log(e);
     res.status(400).send({ success: false, message: e.message });
   }
+};
+
+function filterDate(list, a, b) {
+  const temp = list.map((item) => item.createdAt);
+  const startDate = new Date(a);
+  const endDate = new Date(b);
+  let result = {};
+  for (var d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+    result[dayjs(d).format("DD/MM/YYYY")] = 0;
+  }
+
+  for (element of temp) {
+    const day = dayjs(element).format("DD/MM/YYYY");
+    if (result[day] >= 0) {
+      result[day] += 1;
+    }
+  }
+  return result;
+}
+exports.getVoucherStatistic = async (req, res) => {
+  try {
+    const list = await Voucher.find({
+      $and: [
+        { campaign: req.body.option },
+        { createAt: { $gte: req.body.startDate, $lt: req.body.endDate } },
+      ],
+    });
+
+    console.log(filterDate(list, req.body.startDate, req.body.endDate));
+
+    // for (let i = req.body.startDate; i < req.body.endDate; i++) {
+    //   console.log(dayjs(i).format("DD/MM/YYYY"));
+    // }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
+  console.log(req.body);
 };
