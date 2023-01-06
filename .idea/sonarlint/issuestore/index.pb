@@ -29,8 +29,6 @@ p
 @artifacts/@openzeppelin/contracts/utils/Strings.sol/Strings.json,d\a\dad9a6891f55d368c10a2c3c939a9231935fb07c
 A
 hardhat.config.js,4\2\429ab70247c64d2d87d4dac6787a6e4a9fb2ede2
-J
-controllers/counterpart.js,6\2\62605f6db26e7278b067ae761a2852c9ac2fe4ce
 G
 controllers/category.js,0\3\03eb56641a6a39e75cf211d758c06cdf354f95e5
 D
@@ -50,8 +48,6 @@ N
 middlewares/validation/user.js,2\3\235aa55bcde62895279f71c81747139295cb369c
 <
 models/db.js,7\5\7524c339d74e3fad31731ed3d74a05a9611c8199
-E
-routes/counterpart.js,1\8\18d247817077b6678732817b09600136a6cbf6de
 B
 routes/category.js,b\b\bbc8bb3f22e8d1fab810ceb5beac237aefab3ccd
 7
@@ -82,5 +78,37 @@ E
 controllers/puzzle.js,2\5\2594453865db7f388c89c1bb5574bf722caa51ea
 @
 routes/random.js,1\c\1cd063daea4e93229e0e613b9b8344e867b9e7b9
+@
+routes/puzzle.js,c\8\c8b67609692b56b44c00806c08ff0fa256eb57da
+>
+models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
+B
+models/campaign.js,8\d\8dc3dc31f28f712cc07deae1c33569529b108604
+B
+models/category.js,b\d\bda8270578bc3675aa555119ca87dd9ace8dbc46
+>
+models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
+B
+models/employee.js,9\4\94f6d56ce06522326c7f76caf09c399fbc7a25f4
+>
+models/user.js,5\8\58952233992370efa7ea98b3ec60c43d2d227d89
+B
+models/userjoin.js,f\f\ff562bc4bcee3acc995023e24b338ade150986e7
+B
+routes/vouchers.js,4\1\41598ba681a448dd0c9bbf1af5820ec9db0c3945
+A
+models/voucher.js,d\3\d3caa8a58c353190b7c74bb873e25db7c6529764
 6
 app.js,4\a\4a68969ef8e858229267b842dedf42ab5dde4d50
+E
+routes/counterpart.js,1\8\18d247817077b6678732817b09600136a6cbf6de
+G
+controllers/campaign.js,8\f\8fd541485f957e1eb3450087cbde369070df033c
+E
+models/counterpart.js,b\9\b9a7cc9f4f465cd2604a5bd1272346695f84d9b4
+@
+models/puzzle.js,b\1\b18d3f45e6572853d8371589a0508c56ec1320e3
+A
+models/history.js,6\9\699351d9b265addd025837430f85c925f59fd91d
+J
+controllers/counterpart.js,6\2\62605f6db26e7278b067ae761a2852c9ac2fe4ce

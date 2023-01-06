@@ -6,6 +6,8 @@ const Game = require("../models/game");
 const {findPointAndDiscount} = require("./game");
 const Puzzle = require('../models/puzzle');
 const Campaign = require('../models/campaign');
+const Userjoin = require('../models/userjoin')
+const Counterpart = require('../models/counterpart');
 exports.createVoucher = async (req, res) => {
     try {
         const voucher = new Voucher(req.body);
@@ -76,9 +78,13 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         } else {
             const vouchersFind = await Voucher.find({user});
-            const vouchers = vouchersFind.filter(voucher => {
-                return voucher.description.toLowerCase().includes(keyword.toLowerCase()) || voucher.campaign.toLowerCase().includes(keyword.toLowerCase());
-            })
+            const vouchers = []
+            for (let i = 0; i < vouchersFind.length; i++) {
+                const shop = await checkKeywordExistInCampaign(vouchersFind[i].campaign)
+                if (vouchersFind[i].description.toLowerCase().includes(keyword.toLowerCase()) || shop.toLowerCase().includes(keyword.toLowerCase())) {
+                    vouchers.push(vouchersFind[i])
+                }
+            }
             res.status(200).send({success: true, message: 'Get all vouchers successfully', vouchers});
         }
     } catch (e) {
@@ -87,8 +93,9 @@ exports.searchVouchersByDescriptionAndShop = async (req, res) => {
 }
 //function supplement to get voucher
 const checkKeywordExistInCampaign = async (campaignId) => {
-    const userId = await Campaign.findById(campaignId).select('userId');
-    console.log(userId)
+    const userID = await Campaign.findById(campaignId).select('userID')
+    const shop = await Counterpart.findOne({userID: userID.userID}).select('nameOfShop')
+    return shop.nameOfShop
 }
 //getVoucher
 exports.playGame = async (req, res) => {
@@ -117,16 +124,9 @@ exports.playGame = async (req, res) => {
                         useFindAndModify: false
                     });
                     const campaign = await Campaign.findById(campaignId)
-                    console.log(campaign)
-                    const userArray = campaign.userJoin
-                    userArray.push({
-                        id: userId,
-                        createdAt: new Date()
-                    })
-                    await Campaign.findByIdAndUpdate(campaignId, {userJoin: userArray}, {
-                        new: true,
-                        useFindAndModify: false
-                    })
+                    if (!campaign) res.status(400).send({success: false, message: "campaign is not existed"});
+                    const join = new Userjoin({userID: userId, campaignID: campaignId})
+                    await join.save()
                     res.status(201).send({
                         success: true, message: 'Voucher added successfully',
                         voucher
