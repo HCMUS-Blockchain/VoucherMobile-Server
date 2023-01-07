@@ -233,21 +233,58 @@ exports.getGeneralStatistic = async (req, res) => {
 };
 
 function filterDate(list, a, b) {
-  const temp = list.map((item) => item.createdAt);
-  const startDate = new Date(a);
-  const endDate = new Date(b);
-  let result = {};
-  for (var d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-    result[dayjs(d).format("DD/MM/YYYY")] = 0;
-  }
+  const temp = list.map((item) => ({
+    available: item.available,
+    createdAt: item.createdAt,
+  }));
+  const startDate = dayjs(a).set("hour", 0).set("minute", 0).set("second", 0);
+  let endDate = dayjs(b);
 
+  let usedVouchers = {};
+  let releaseVouchers = {};
+  endDate = endDate
+    .add(1, "day")
+    .set("hour", 0)
+    .set("minute", 0)
+    .set("second", 0);
+  for (var d = startDate; d < endDate; d = d.add(1, "day")) {
+    usedVouchers[dayjs(d).format("DD/MM/YYYY")] = 0;
+    releaseVouchers[dayjs(d).format("DD/MM/YYYY")] = 0;
+  }
   for (element of temp) {
-    const day = dayjs(element).format("DD/MM/YYYY");
-    if (result[day] >= 0) {
-      result[day] += 1;
+    const day = dayjs(element.createdAt).format("DD/MM/YYYY");
+    if (usedVouchers[day] >= 0 && !element.available) {
+      usedVouchers[day] += 1;
+    } else if (releaseVouchers[day] >= 0 && element.available) {
+      releaseVouchers[day] += 1;
     }
   }
-  return result;
+  return { usedVouchers, releaseVouchers };
+}
+
+function filterUser(list, a, b) {
+  const temp = list.map((item) => ({
+    createdAt: item.createdAt,
+  }));
+  let userCount = {};
+
+  const startDate = dayjs(a).set("hour", 0).set("minute", 0).set("second", 0);
+  let endDate = dayjs(b);
+  endDate = endDate
+    .add(1, "day")
+    .set("hour", 0)
+    .set("minute", 0)
+    .set("second", 0);
+  for (var d = startDate; d < endDate; d = d.add(1, "day")) {
+    userCount[dayjs(d).format("DD/MM/YYYY")] = 0;
+  }
+  for (element of temp) {
+    const day = dayjs(element.createdAt).format("DD/MM/YYYY");
+    if (userCount[day] >= 0) {
+      userCount[day] += 1;
+    }
+  }
+  return userCount;
 }
 exports.getVoucherStatistic = async (req, res) => {
   try {
@@ -258,14 +295,88 @@ exports.getVoucherStatistic = async (req, res) => {
       ],
     });
 
-    console.log(filterDate(list, req.body.startDate, req.body.endDate));
+    const result = filterDate(list, req.body.startDate, req.body.endDate);
 
-    // for (let i = req.body.startDate; i < req.body.endDate; i++) {
-    //   console.log(dayjs(i).format("DD/MM/YYYY"));
-    // }
+    res.status(201).send({
+      result: [
+        Object.values(result.usedVouchers),
+        Object.values(result.releaseVouchers),
+      ],
+      success: true,
+      message: "Get vouchers statistic successfully",
+    });
   } catch (e) {
     console.log(e);
     res.status(400).send({ success: false, message: e.message });
   }
-  console.log(req.body);
+};
+
+exports.getGameStatistic = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const campaignList = await Voucher.find({ campaign: id });
+
+    const data = { "Tile 2048": 0, Jump: 0, Shake: 0, Quiz: 0 };
+    for (let item of campaignList) {
+      console.log(item.game);
+      if (data[item.game] >= 0) {
+        data[item.game] += 1;
+      }
+    }
+    res.status(201).send({
+      result: Object.values(data),
+      success: true,
+      message: "Get vouchers statistic successfully",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.getDiscountStatistic = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const campaignList = await Voucher.find({ campaign: id });
+
+    const result = {};
+    for (let item of campaignList) {
+      if (result[item.discount]) {
+        result[item.discount] += 1;
+      } else {
+        result[item.discount] = 1;
+      }
+    }
+    res.status(201).send({
+      result: [Object.keys(result), Object.values(result)],
+      success: true,
+      message: "Get discount statistic successfully",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.getUserStatistic = async (req, res) => {
+  try {
+    const list = await Userjoin.find({
+      $and: [
+        { campaignID: req.body.option },
+        { createdAt: { $gte: req.body.startDate, $lt: req.body.endDate } },
+      ],
+    });
+
+    const result = filterUser(list, req.body.startDate, req.body.endDate);
+    console.log(Object.values(result));
+
+    res.status(201).send({
+      result: Object.values(result),
+      success: true,
+      message: "Get user statistic successfully",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ success: false, message: e.message });
+  }
 };
