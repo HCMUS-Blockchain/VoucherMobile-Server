@@ -73,3 +73,18 @@ exports.getCounterpart = async (req, res) => {
     res.status(400).send({ success: false, message: e.message });
   }
 };
+
+exports.getPopularBranch = async (req, res) => {
+    try {
+        const counterparts = await Counterpart.find()
+        .limit(5)
+        .sort({ totalDonation: -1 });
+        res.status(200).send({
+        success: true,
+        message: "Get popular branch successfully",
+        counterparts,
+        });
+    } catch (e) {
+        res.status(400).send({ success: false, message: e.message });
+    }
+}
