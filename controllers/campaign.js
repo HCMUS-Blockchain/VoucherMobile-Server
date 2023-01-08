@@ -13,6 +13,32 @@ exports.createCampaign = async (req, res) => {
   }
 };
 
+exports.getPopularBranch = async (req, res) => {
+  try{
+    const campaigns = await Campaign.find().limit(5).sort({totalDonation: -1});
+    res.status(200).send({
+        success: true,
+        message: "Get popular branch successfully",
+        campaigns,
+    })
+  }catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+}
+
+exports.getNewestCampaign = async (req, res) => {
+    try {
+        const campaigns = await Campaign.find().limit(5).sort({ createdAt: -1 });
+        res.status(200).send({
+        success: true,
+        message: "Get newest campaign successfully",
+        campaigns,
+        });
+    } catch (e) {
+        res.status(400).send({ success: false, message: e.message });
+    }
+}
+
 exports.getAllCampaigns = async (req, res) => {
   try {
     const campaigns = await Campaign.find({ userID: req.user._id });
