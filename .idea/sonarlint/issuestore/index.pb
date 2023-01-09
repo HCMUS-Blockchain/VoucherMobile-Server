@@ -74,14 +74,8 @@ E
 routes/random.js,1\c\1cd063daea4e93229e0e613b9b8344e867b9e7b9
 @
 routes/puzzle.js,c\8\c8b67609692b56b44c00806c08ff0fa256eb57da
->
-models/game.js,0\7\077d57a02bb15ee0bb15e6b3472285ba18355ba3
-B
-models/campaign.js,8\d\8dc3dc31f28f712cc07deae1c33569529b108604
 B
 models/category.js,b\d\bda8270578bc3675aa555119ca87dd9ace8dbc46
-B
-models/employee.js,9\4\94f6d56ce06522326c7f76caf09c399fbc7a25f4
 >
 models/user.js,5\8\58952233992370efa7ea98b3ec60c43d2d227d89
 B
@@ -92,10 +86,6 @@ A
 models/voucher.js,d\3\d3caa8a58c353190b7c74bb873e25db7c6529764
 E
 models/counterpart.js,b\9\b9a7cc9f4f465cd2604a5bd1272346695f84d9b4
-@
-models/puzzle.js,b\1\b18d3f45e6572853d8371589a0508c56ec1320e3
-A
-models/history.js,6\9\699351d9b265addd025837430f85c925f59fd91d
 F
 controllers/voucher.js,c\d\cd1ca5404e7964131a631e3d8407583ae6867959
 >

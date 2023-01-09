@@ -1,5 +1,7 @@
 const Campaign = require("../models/campaign");
 const Counterpart = require("../models/counterpart");
+const User = require("../models/user");
+const Favorite = require("../models/favorite");
 exports.createCampaign = async (req, res) => {
     try {
         req.body.userID = req.user._id;
@@ -26,20 +28,56 @@ exports.getPopularBranch = async (req, res) => {
     }
 }
 
+exports.addFavorite = async (req, res) => {
+    try {
+        const {userID, campaignID} = req.body;
+        const user = await User.findById(userID);
+        const campaign = await Campaign.findById(campaignID);
+        if (!user&&!campaign) return res.status(400).send({success: false, message: "User or campaign not found"});
+        await Favorite.create({userID, campaignID});
+        res.status(200).send({
+            success: true,
+            message: "Add favorite successfully",
+        });
+    } catch (e) {
+        res.status(400).send({success: false, message: e.message});
+    }
+}
+
+exports.deleteFavorite = async (req, res) => {
+    try {
+        const {userID, campaignID} = req.body;
+        const user = await User.findById(userID);
+        const campaign = await Campaign.findById(campaignID);
+        if (!user&&!campaign) return res.status(400).send({success: false, message: "User or campaign not found"});
+        await Favorite.deleteOne({userID, campaignID});
+        res.status(200).send({
+            success: true,
+            message: "Remove favorite successfully",
+        });
+    } catch (e) {
+        res.status(400).send({success: false, message: e.message});
+    }
+}
+
 exports.getNewestCampaign = async (req, res) => {
     try {
+        const userID = req.user._id;
         let campaigns = await Campaign.find().limit(5).sort({createdAt: -1});
         let newCampaigns = []
         for (let i = 0; i < campaigns.length; i++) {
+            const favorite = await Favorite.findOne({userID, campaignID: campaigns[i]._id});
+            const checkFavorite = favorite ? true : false;
             const objectAddress = await Counterpart.findOne({userID: campaigns[i].userID}).select("headquarter");
             const address = objectAddress.headquarter;
             const newObject = {
                 ...campaigns[i]._doc,
-                address
+                address,
+                checkFavorite,
             }
             newCampaigns.push(newObject);
         }
-        campaigns= newCampaigns;
+        campaigns = newCampaigns;
         res.status(200).send({
             success: true,
             message: "Get newest campaign successfully",
