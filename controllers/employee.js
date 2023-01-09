@@ -16,7 +16,6 @@ exports.createEmployee = async (req, res) => {
         .status(201)
         .send({ success: true, message: "Employee list created successfully" });
     } else {
-      console.log("AAA");
       req.body.ownerID = req.user._id;
       const employee = new Employee(req.body);
       await employee.save();
