@@ -55,7 +55,6 @@ exports.createQuiz = async (req, res) => {
     req.body.questions = JSON.parse(req.body.questions);
     req.body.userID = req.user._id;
     const quiz = new Quiz(req.body);
-
     await quiz.save();
     res
       .status(201)
@@ -86,7 +85,7 @@ exports.updateQuiz = async (req, res) => {
 
 exports.getOnceQuiz = async (req, res) => {
   try {
-    const quiz = await Quiz.find({
+    const quiz = await Quiz.findOne({
       $and: [{ _id: req.params.id }, { userID: req.user._id }],
     });
     res.status(200).send({
