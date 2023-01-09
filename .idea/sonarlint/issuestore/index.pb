@@ -52,8 +52,6 @@ B
 routes/category.js,b\b\bbc8bb3f22e8d1fab810ceb5beac237aefab3ccd
 7
 bin/www,f\9\f9f3ad31c1666c9d010b84cbbe24e70370a40411
-C
-middlewares/auth.js,6\e\6ef1f1734a4970e0bcd86633dd049a66965633e3
 B
 scripts/getData.js,9\a\9a93693b6443f525185070d5c0d434559e2534ae
 J
@@ -102,3 +100,7 @@ F
 controllers/voucher.js,c\d\cd1ca5404e7964131a631e3d8407583ae6867959
 >
 models/quiz.js,2\f\2f57bc8ba85b7b3f64ce021e45284072545586fd
+J
+controllers/counterpart.js,6\2\62605f6db26e7278b067ae761a2852c9ac2fe4ce
+E
+routes/counterpart.js,1\8\18d247817077b6678732817b09600136a6cbf6de
