@@ -17,6 +17,7 @@ const puzzleRouter = require("./routes/puzzle");
 const employeeRouter = require("./routes/employee");
 const historyRouter = require("./routes/history");
 const statisticRouter = require("./routes/statistic");
+const notificationRouter = require("./routes/notification");
 const storeRouter = require("./routes/store");
 const app = express();
 
@@ -42,6 +43,7 @@ app.use(base + "/puzzle", puzzleRouter);
 app.use(base + "/employees", employeeRouter);
 app.use(base + "/history", historyRouter);
 app.use(base + "/statistics", statisticRouter);
+app.use(base + "/notification", notificationRouter);
 app.use(base + "/stores", storeRouter);
 
 // catch 404 and forward to error handler
