@@ -38,9 +38,10 @@ exports.updateStore = async (req, res) => {
     const isUpdateCoordinates = req.body.coordinates;
     if (isUpdateCoordinates.includes(",")) {
       const temp = req.body.coordinates.split(",");
+      console.log(temp);
       const coordinates = {
-        latitude: temp[0],
-        longitude: temp[1],
+        longitude: temp[0],
+        latitude: temp[1],
       };
       body.coordinates = coordinates;
     }
@@ -65,6 +66,20 @@ exports.getStore = async (req, res) => {
       success: true,
       message: "Get a store successfully",
       store,
+    });
+  } catch (e) {
+    res.status(400).send({ success: false, message: e.message });
+  }
+};
+
+exports.deteleStore = async (req, res) => {
+  try {
+    await Store.find({
+      $and: [{ ownerID: req.user._id }, { _id: req.params.id }],
+    }).deleteOne();
+    res.status(200).send({
+      success: true,
+      message: "Delete a store successfully",
     });
   } catch (e) {
     res.status(400).send({ success: false, message: e.message });
