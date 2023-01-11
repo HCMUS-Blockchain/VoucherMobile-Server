@@ -3,8 +3,8 @@ exports.createStore = async (req, res) => {
   try {
     const temp = req.body.coordinates.split(",");
     const coordinates = {
-      latitude: temp[0],
-      longitude: temp[1],
+      latitude: temp[1],
+      longitude: temp[0],
     };
     req.body.coordinates = coordinates;
     req.body.ownerID = req.user._id;

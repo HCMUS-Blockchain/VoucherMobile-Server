@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-
+const Counterpart = require("../models/counterpart");
 const SECONDS_PER_DAY = 60 * 60 * 24;
 
 exports.createUser = async (req, res) => {
@@ -75,14 +75,16 @@ exports.getProfileUser = async (req, res) => {
     const authHeader = req.headers.authorization;
     const [tokenType, accessToken] = authHeader.split(" ");
     const payload = jwt.decode(accessToken);
-    const user = await User.findById(payload._id);
+    const user = await Counterpart.findOne({ userID: payload._id }).populate(
+      "userID"
+    );
     if (!user) return res.status(400).send({ error: "User not found" });
     return res.status(200).json({
       success: true,
-      _id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      avatar: user.avatar,
+      _id: user.userID._id,
+      email: user.userID.email,
+      fullName: user.userID.fullName,
+      avatar: user.image,
     });
   } catch (error) {
     console.log("failed to parse token", error);
@@ -92,25 +94,21 @@ exports.getProfileUser = async (req, res) => {
     });
   }
 };
-exports.checkUserExistByEmail = async (req,res) =>{
-  console.log(req.body)
-  const userEmail = req.body.email
-  try{
-    if(userEmail){
-      const user= await User.findOne({email:userEmail})
-      if (user){
+exports.checkUserExistByEmail = async (req, res) => {
+  console.log(req.body);
+  const userEmail = req.body.email;
+  try {
+    if (userEmail) {
+      const user = await User.findOne({ email: userEmail });
+      if (user) {
+        res.status(201).json({ success: true, message: user });
+      } else
         res
-            .status(201)
-            .json({success: true, message: user});
-      }else res
           .status(500)
-          .json({success: false, message: 'can not find user id'});
-    }else res
-        .status(500)
-        .json({success: false, message: 'can not find user id'});
-  }catch (e) {
-    res
-        .status(500)
-        .json({success: false, message: e.message});
+          .json({ success: false, message: "can not find user id" });
+    } else
+      res.status(500).json({ success: false, message: "can not find user id" });
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
   }
-}
+};
